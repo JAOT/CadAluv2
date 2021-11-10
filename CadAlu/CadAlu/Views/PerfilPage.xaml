@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CadAlu.Views.PerfilPage"
+             Title="Perfil"
+             xmlns:local="clr-namespace:CadAlu.ViewModels"  
+             xmlns:model="clr-namespace:CadAlu.Models"  
+             x:Name="BrowseEducandosPage">
+
+    <!--<ContentPage.ToolbarItems>
+        <ToolbarItem Text="Perfil" Command="{Binding AddEducandoCommand}" />
+    </ContentPage.ToolbarItems>
+    
+      x:DataType enables compiled bindings for better performance and compile time validation of binding expressions.
+      https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/data-binding/compiled-bindings
+    -->
+    <RefreshView x:DataType="local:EducandosViewModel" Command="{Binding LoadEducandosCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <CollectionView x:Name="EducandosListView"
+                ItemsSource="{Binding Educandos}"
+                SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Padding="10" x:DataType="model:Educando">
+                        <Label Text="{Binding id}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16" />
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                NumberOfTapsRequired="1"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:EducandosViewModel}}, Path=EducandoTapped}"		
+                                CommandParameter="{Binding .}">
+                            </TapGestureRecognizer>
+                        </StackLayout.GestureRecognizers>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+</ContentPage>
