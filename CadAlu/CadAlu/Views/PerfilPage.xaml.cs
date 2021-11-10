@@ -13,12 +13,12 @@ namespace CadAlu.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class PerfilPage : ContentPage
     {
-        EducandosViewModel _viewModel;
+        PerfilPageViewModel _viewModel;
         public PerfilPage()
         {
             InitializeComponent();
 
-            BindingContext = _viewModel = new EducandosViewModel();
+            BindingContext = _viewModel = new PerfilPageViewModel();
         }
         protected override void OnAppearing()
         {

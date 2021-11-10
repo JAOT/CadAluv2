@@ -18,6 +18,8 @@ namespace CadAlu.Services
                 new Item { Id = Guid.NewGuid().ToString(), Text = "O Casimiro mordeu a grade de ferro", Description="Hoje, logo após ter comido espinafres. Levado ao dentista o gradeamento afectado. Não há danos estreuturais.", DataHora="06/11/2012 12:34"},
                 new Item { Id = Guid.NewGuid().ToString(), Text = "Publicação dos horários no placard", Description="Foram hoje publicados os horários para o 6º ano.", DataHora="06/11/2012 12:34"},
             };
+
+
         }
 
         public async Task<bool> AddItemAsync(Item item)
@@ -53,5 +55,7 @@ namespace CadAlu.Services
         {
             return await Task.FromResult(items);
         }
+
+
     }
 }

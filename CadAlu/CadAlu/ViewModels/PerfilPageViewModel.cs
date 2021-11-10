@@ -23,6 +23,7 @@ namespace CadAlu.ViewModels
             Title = "Perfil";
             Educandos = new ObservableCollection<Educando>();
             LoadEducandosCommand = new Command(async () => await ExecuteLoadEducandosCommand());
+            
 
             EducandoTapped = new Command<Educando>(OnEducandoSelected);
 
@@ -45,6 +46,7 @@ namespace CadAlu.ViewModels
             {
                 Educandos.Clear();
                 var educandos = await EducandoDataStore.GetEducandosAsync(true);
+
                 foreach (Educando educando in educandos)
                 {
                     Educandos.Add(educando);

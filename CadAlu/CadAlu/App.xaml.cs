@@ -14,6 +14,7 @@ namespace CadAlu
             InitializeComponent();
 
             DependencyService.Register<MockDataStore>();
+            DependencyService.Register<EducandoDataStore>();
             MainPage = new AppShell();
         }
 

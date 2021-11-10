@@ -20,9 +20,14 @@ namespace CadAlu.ViewModels
         {
             Title = "Educandos";
             Educandos = new ObservableCollection<Educando>();
-            LoadEducandosCommand = new Command(async () => await ExecuteLoadEducandosCommand());
-
-            EducandoTapped = new Command<Educando>(OnEducandoSelected);
+            //LoadEducandosCommand = new Command(async () => await ExecuteLoadEducandosCommand());
+            var e1 = new Educando { id = Guid.NewGuid().ToString(), Nome = "Judas Iscariote" };
+            var e2 = new Educando { id = Guid.NewGuid().ToString(), Nome = "Jesus Cristo" };
+            var e3 = new Educando { id = Guid.NewGuid().ToString(), Nome = "Barrabás" };
+            Educandos.Add(e1);
+            Educandos.Add(e2);
+            Educandos.Add(e3);
+            //EducandoTapped = new Command<Educando>(OnEducandoSelected);
         }
 
         async Task ExecuteLoadEducandosCommand()

@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace CadAlu.Services
 {
-    class MockEducandos : IEducandoDataStore<Educando>
+    public class EducandoDataStore : IEducandoDataStore<Educando>
     {
         readonly List<Educando> educandos;
 
-        public MockEducandos()
+        public EducandoDataStore()
         {
             educandos = new List<Educando>()
             {
