@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CadAlu.iOS", "CadAlu\CadAlu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CadAlu", "CadAlu\CadAlu\CadAlu.csproj", "{88D73FD1-8801-4862-904E-0FEA940E7181}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{A1170A98-66C2-4C53-B92A-6A3424E622B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "CadAlu\WebAPI\WebAPI.csproj", "{A1170A98-66C2-4C53-B92A-6A3424E622B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
