@@ -49,7 +49,10 @@ namespace CadAlu.ViewModels
 
                 foreach (Educando educando in educandos)
                 {
-                    Educandos.Add(educando);
+                    if (educando.pai1 == 1)
+                    { 
+                        Educandos.Add(educando);
+                    }
                 }
             }
             catch (Exception ex)

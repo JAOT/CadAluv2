@@ -4,9 +4,8 @@
     {
         public string id { get; set; }
         public string Nome { get; set; }
-        private string escola { get; set; }
-        private string turma { get; set; }
-        private string ano { get; set; }
-        private string idade { get; set; }
+        public int turma { get; set; }
+        public int pai1 { get; set; }
+        public string pai2 { get; set; }
     }
 }

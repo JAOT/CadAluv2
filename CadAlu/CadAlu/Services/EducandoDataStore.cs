@@ -15,7 +15,7 @@ namespace CadAlu.Services
         {
             educandos = new List<Educando>()
             {
-                new Educando { id = Guid.NewGuid().ToString(), Nome = "Judas Iscariote"},
+                new Educando { id = Guid.NewGuid().ToString(), Nome = "Judas Iscariote", turma=1, pai1=1},
                 new Educando { id = Guid.NewGuid().ToString(), Nome = "Jesus Cristo"},
                 new Educando { id = Guid.NewGuid().ToString(), Nome = "Barrabás"},
             };
