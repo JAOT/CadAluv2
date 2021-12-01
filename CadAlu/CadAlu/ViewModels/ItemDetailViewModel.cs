@@ -7,6 +7,7 @@ using Xamarin.Forms;
 namespace CadAlu.ViewModels
 {
     [QueryProperty(nameof(ItemId), nameof(ItemId))]
+    //modelo para a página onde irão aparecer as mensagens
     public class ItemDetailViewModel : BaseViewModel
     {
         private string itemId;

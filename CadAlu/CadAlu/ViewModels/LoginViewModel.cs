@@ -6,6 +6,7 @@ using Xamarin.Forms;
 
 namespace CadAlu.ViewModels
 {
+    //esta será a página de login, ainda a ser implementada
     public class LoginViewModel : BaseViewModel
     {
         public Command LoginCommand { get; }

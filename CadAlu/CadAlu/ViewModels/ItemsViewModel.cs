@@ -8,6 +8,7 @@ using Xamarin.Forms;
 
 namespace CadAlu.ViewModels
 {
+    //modelo para a página onde surge a lista de mensagens
     public class ItemsViewModel : BaseViewModel
     {
         private Item _selectedItem;

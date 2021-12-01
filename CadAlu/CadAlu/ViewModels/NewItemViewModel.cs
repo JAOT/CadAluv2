@@ -7,6 +7,7 @@ using Xamarin.Forms;
 
 namespace CadAlu.ViewModels
 {
+    //modelo para a página de criação de mensagens
     public class NewItemViewModel : BaseViewModel
     {
         private string text;

@@ -10,6 +10,8 @@ using Xamarin.Forms;
 
 namespace CadAlu.ViewModels
 {
+    //Página de informação mais detalhada do utilizador.
+    //de momento, surge apenas o nome do educando com o código do encarregado de educação especificado no código
     class PerfilPageViewModel : BaseViewModel
     {
         private Educando _selectedEducando;
@@ -37,7 +39,7 @@ namespace CadAlu.ViewModels
             // This will push the ItemDetailPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(EducandoDetailPage)}?{nameof(EducandoDetailViewModel.EducandoId)}={educando.id}");
         }
-
+        //método que pesquisa o aluno, apresentando apenas os alunos com o pai1 (encarrwegado de educação com o id = 1)
         async Task ExecuteLoadEducandosCommand()
         {
             IsBusy = true;

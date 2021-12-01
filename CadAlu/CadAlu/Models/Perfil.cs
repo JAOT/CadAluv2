@@ -4,6 +4,7 @@ using System.Text;
 
 namespace CadAlu.Models
 {
+    //modelo para o utilizador principal da aplicação
     public class Perfil
     {
         public string id;

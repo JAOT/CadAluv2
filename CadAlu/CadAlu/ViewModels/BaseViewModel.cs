@@ -8,8 +8,10 @@ using Xamarin.Forms;
 
 namespace CadAlu.ViewModels
 {
+    //A página modelo para a aplicação, que depois é reutilizada por outras views
     public class BaseViewModel : INotifyPropertyChanged
     {
+        //registo das origens de dados
         public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
         public IEducandoDataStore<Educando> EducandoDataStore => DependencyService.Get<IEducandoDataStore<Educando>>();
 

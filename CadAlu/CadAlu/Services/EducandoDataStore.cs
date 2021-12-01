@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CadAlu.Services
 {
+    //Sistema de prototipagem de dados existentes. Criados dados estáticos para testes dentro da aplicação
     public class EducandoDataStore : IEducandoDataStore<Educando>
     {
         readonly List<Educando> educandos;

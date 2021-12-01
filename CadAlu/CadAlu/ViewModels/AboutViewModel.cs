@@ -5,6 +5,9 @@ using Xamarin.Forms;
 
 namespace CadAlu.ViewModels
 {
+    /// <summary>
+    /// Página de início da aplicação. Ainda se mentém o ecrã por defeito, a ser alterado para o ecrã de login ou ecrã de início da aplicação 
+    /// </summary>
     public class AboutViewModel : BaseViewModel
     {
         public AboutViewModel()

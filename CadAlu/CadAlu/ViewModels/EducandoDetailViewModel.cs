@@ -8,6 +8,9 @@ namespace CadAlu.ViewModels
 {
     [QueryProperty(nameof(educandoID), nameof(educandoID))]
 
+
+    //Modelo para a página onde irão aparecer os dados de cada educando.
+
     public class EducandoDetailViewModel : BaseViewModel
     {
         private string educandoID;
