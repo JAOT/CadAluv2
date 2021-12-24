@@ -12,7 +12,8 @@ namespace CadAlu.ViewModels
     {
         private string text;
         private string description;
-
+        public Command SaveCommand { get; }
+        public Command CancelCommand { get; }
         public NewItemViewModel()
         {
             SaveCommand = new Command(OnSave, ValidateSave);
@@ -39,8 +40,7 @@ namespace CadAlu.ViewModels
             set => SetProperty(ref description, value);
         }
 
-        public Command SaveCommand { get; }
-        public Command CancelCommand { get; }
+
 
         private async void OnCancel()
         {

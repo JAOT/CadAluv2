@@ -13,7 +13,7 @@ namespace CadAlu.ViewModels
         public AboutViewModel()
         {
             Title = "About";
-            OpenWebCommand = new Command(async () => await Browser.OpenAsync("https://aka.ms/xamarin-quickstart"));
+            OpenWebCommand = new Command(async () => await Browser.OpenAsync("http://10.0.2.2:3001"));
         }
 
         public ICommand OpenWebCommand { get; }
