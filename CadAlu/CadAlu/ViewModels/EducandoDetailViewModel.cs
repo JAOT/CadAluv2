@@ -15,10 +15,7 @@ namespace CadAlu.ViewModels
     {
         private string educandoID;
         private string nome;
-        private string escola;
-        private string turma;
-        private string ano;
-        private string idade;
+
         public string Id { get; set; }
 
         public string Nome

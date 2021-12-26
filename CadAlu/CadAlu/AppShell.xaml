@@ -33,7 +33,7 @@
         <ShellContent Title="About" Icon="icon_about.png" Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
         <ShellContent Title="Mensagens" Icon="icon_feed.png" ContentTemplate="{DataTemplate local:ItemsPage}" />
         <ShellContent Title="Perfil" Icon="icon_feed.png" ContentTemplate="{DataTemplate local:PerfilPage}" />
-        <ShellContent Title="Login" Route="LoginPage" ContentTemplate="{DataTemplate local:LoginPage}" />
+        <ShellContent Title="Login" Route="OneTimeLogin" ContentTemplate="{DataTemplate local:OneTimeLogin}" />
     </TabBar>
 
     <!--

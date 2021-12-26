@@ -16,7 +16,9 @@ namespace CadAlu
             DependencyService.Register<MockDataStore>();
             DependencyService.Register<EducandoDataStore>();
             //MainPage = new AppShell();
-            MainPage = new LoginPage();
+            //MainPage = new LoginPage();
+            //MainPage = new SplashScreenPage();
+            MainPage = new NavigationPage( new SplashScreenPage());
         }
 
         protected override void OnStart()

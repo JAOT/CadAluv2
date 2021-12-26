@@ -12,27 +12,14 @@ using Xamarin.Forms;
 namespace CadAlu.ViewModels
 {
     //esta será a página de login, ainda a ser implementada
-    public class LoginViewModel : BaseViewModel
+    public class LoginPageViewModel : BaseViewModel
     {
         public string email;
         public string password;
         public Command LoginCommand { get; }
 
-        public LoginViewModel()
+        public LoginPageViewModel()
         {
-            var loginActivo = Preferences.Get("loginActivo", string.Empty);
-            var appEmail = Preferences.Get("appEmail", string.Empty);
-            var appPassword = Preferences.Get("appPassword", string.Empty);
-
-            //O utilizador ainda não fez login pela primeira vez
-            if (string.IsNullOrWhiteSpace(loginActivo))
-            {
-            }
-            else
-            {
-                FingerprintAuth();
-            }
-
             LoginCommand = new Command(OnLoginClicked);
             this.PropertyChanged +=
                 (_, __) => LoginCommand.ChangeCanExecute();
