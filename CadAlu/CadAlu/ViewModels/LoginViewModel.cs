@@ -1,9 +1,12 @@
 ﻿using CadAlu.Views;
 using MySqlConnector;
+using Plugin.Fingerprint;
+using Plugin.Fingerprint.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace CadAlu.ViewModels
@@ -17,9 +20,36 @@ namespace CadAlu.ViewModels
 
         public LoginViewModel()
         {
+            var loginActivo = Preferences.Get("loginActivo", string.Empty);
+            var appEmail = Preferences.Get("appEmail", string.Empty);
+            var appPassword = Preferences.Get("appPassword", string.Empty);
+
+            //O utilizador ainda não fez login pela primeira vez
+            if (string.IsNullOrWhiteSpace(loginActivo))
+            {
+            }
+            else
+            {
+                FingerprintAuth();
+            }
+
             LoginCommand = new Command(OnLoginClicked);
             this.PropertyChanged +=
                 (_, __) => LoginCommand.ChangeCanExecute();
+        }
+
+        private async void FingerprintAuth()
+        {
+            var request = new AuthenticationRequestConfiguration("Prove you have fingers!", "Because without it you can't have access");
+            var result = await CrossFingerprint.Current.AuthenticateAsync(request);
+            if (result.Authenticated)
+            {
+                await App.Current.MainPage.DisplayAlert("Info", "Olá!", "OK");
+            }
+            else
+            {
+                // not allowed to do secret stuff :(
+            }
         }
 
         public string Email
@@ -36,15 +66,21 @@ namespace CadAlu.ViewModels
 
         private async void OnLoginClicked(object obj)
         {
-            
-            await App.Current.MainPage.DisplayAlert("Info", Email, "OK");
-            MySqlConnection mySqlConnection = new MySqlConnection("server=192.168.1.219;uid=pma;Database=cadalu;");
+            var deviceId =      Preferences.Get("my_deviceId", string.Empty);
+            if (string.IsNullOrWhiteSpace(deviceId))
+            {
+                deviceId = System.Guid.NewGuid().ToString();
+                Preferences.Set("my_deviceId", deviceId);
+            }
+            await App.Current.MainPage.DisplayAlert("Info", deviceId, "OK");
+
+            MySqlConnection mySqlConnection = new MySqlConnection("server=PrimeIT-Lenovo;uid=pma;Database=cadalu;");
             mySqlConnection.Open();
 
             var command = mySqlConnection.CreateCommand();
-            
-            command.CommandText = "select * from pais where email = '"+Email+"'";
-            
+
+            command.CommandText = "select * from pais where deviceId = '" + deviceId + "'";
+
             var reader = command.ExecuteReader();
             if (reader.HasRows)
             {

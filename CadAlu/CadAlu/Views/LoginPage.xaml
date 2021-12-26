@@ -7,12 +7,12 @@
              x:Class="CadAlu.Views.LoginPage"
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
-        <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
-            <Label Text="email" FontSize="Medium" />
-            <Entry Text="{Binding Email, Mode=TwoWay}" FontSize="Medium" />
-            <Label Text="password" FontSize="Medium" />
-            <Entry Text="{Binding Password, Mode=TwoWay}" FontSize="Medium" />
-            <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}"/>
+        <StackLayout Padding="10,0,10,0" VerticalOptions="Center" >
+            <Label x:Name="txtEmail" Text="email" FontSize="Medium" IsVisible="false"  Command="{Binding SetVisible}"/>
+            <Entry x:Name="entName" Text="{Binding Email, Mode=TwoWay}" FontSize="Medium"  IsVisible="false"/>
+            <Label x:Name= "txtPassword" Text="password" FontSize="Medium"  IsVisible="false"/>
+            <Entry x:Name= "entPassword" Text="{Binding Password, Mode=TwoWay}" FontSize="Medium"  IsVisible="false"/>
+            <Button x:Name="btnLogin" VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}" IsVisible="false"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
