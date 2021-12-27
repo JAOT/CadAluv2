@@ -50,7 +50,7 @@ namespace CadAlu.Views
             var result = await CrossFingerprint.Current.AuthenticateAsync(request);
             if (result.Authenticated)
             {
-                await App.Current.MainPage.DisplayAlert("Info", "Olá!", "OK");
+                //await App.Current.MainPage.DisplayAlert("Info", "Olá!", "OK");
                 await Navigation.PopAsync();
                 Application.Current.MainPage = new MainPage();
                 //await Navigation.PushAsync((new AboutPage()));

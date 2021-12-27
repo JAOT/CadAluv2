@@ -52,7 +52,7 @@ namespace CadAlu.ViewModels
 
         private async void OnSubmeter()
         {
-            var connection = new MySqlConnection("Server=DESKTOP;Database=cadalu;Uid=android;");
+            var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
             connection.Open();
 
             var command = connection.CreateCommand();
@@ -62,9 +62,12 @@ namespace CadAlu.ViewModels
             while (reader.Read())
             {
                 var p = reader.GetString("password");
+                var id = reader.GetUInt64("identidade");
+
                 if (p == password)
                 {
                     Preferences.Set("appEmail", email);
+                    Preferences.Set("appId", id);
                     await Application.Current.MainPage.Navigation.PushAsync( new SplashScreenPage());
                 }
                 else
