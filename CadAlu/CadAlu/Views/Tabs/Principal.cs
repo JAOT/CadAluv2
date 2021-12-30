@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace CadAlu.Views.Tabs
@@ -37,45 +37,49 @@ namespace CadAlu.Views.Tabs
             lblTurma.Text = Turma.Nome;
             stackLayout.Children.Add(lblTurma);
 
-            var msgDataTemplate = new DataTemplate(() =>
-            {
-                var grid = new Grid();
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                //grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(2, GridUnitType.Auto) });
-                var temaLabel = new Label { FontAttributes = FontAttributes.Bold };
-                var textoLabel = new Label { FontAttributes = FontAttributes.Bold };
-                var professorLabel = new Label { FontAttributes = FontAttributes.Bold };
-                var dataLabel = new Label { FontAttributes = FontAttributes.Bold };
-                temaLabel.SetBinding(Label.TextProperty, "Tema");
-                textoLabel.SetBinding(Label.TextProperty, "Texto");
-                professorLabel.SetBinding(Label.TextProperty, "Professor");
-                dataLabel.SetBinding(Label.TextProperty, "Data");
-
-                grid.Children.Add(temaLabel, 0, 0);
-                //grid.Children.Add(textoLabel, 0, 1);
-                //grid.Children.Add(professorLabel, 0, 2);
-                //grid.Children.Add(dataLabel, 0, 3);
-
-
-                return new ViewCell { View = grid };
-            });
-
-
             ListView listView = new ListView();
+            listView.ItemTemplate = new DataTemplate(typeof(ListaMensagem));
+
+            listView.ItemTemplate.SetBinding(ListaMensagem.TextProperty, "Tema");
+            listView.ItemTemplate.SetBinding(ListaMensagem.DetailProperty, "DataHora");
+            listView.ItemTapped += ListView_ItemTappedAsync;
             listView.ItemsSource = ObterMensagens();
-            listView.ItemTemplate = msgDataTemplate;
+                
+
             stackLayout.Children.Add(listView);
 
             this.Content = stackLayout;
+
         }
-        
+
+        async void ListView_ItemTappedAsync(object sender, ItemTappedEventArgs e)
+        {
+            Mensagem m = (Mensagem)((ListView)sender).SelectedItem;
+            var msg = await DisplayAlert(m.Tema, m.Texto + "\n\nProfessor: " + m.Professor.Nome + "\n\n" + "Enviado :"+m.DataHora, "Responder", "OK");
+            var rTema = "Re: " + m.Tema;
+            if (msg == true)
+            {
+               var resposta = await DisplayPromptAsync(rTema, "Mensagem", "Enviar", "Cancelar");
+                if (!string.IsNullOrEmpty(resposta))
+                {
+                    var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+                    connection.Open();
+
+                    var command = connection.CreateCommand();
+                    command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor, datahora) VALUES ('" + Aluno.Id+"', '" + rTema + "', '" + resposta+"', '1', '"+ DateTime.Now+"')";
+                    try
+                    {
+                        var reader = command.ExecuteNonQuery();
+                        //_ = DisplayAlert("Info", "Mensagem Enviada!", "OK");
+                    }
+                    catch (Exception ex)
+                    {
+                        _ = DisplayAlert("Info", "Erro de ligação.", "OK");
+                    }
+                }
+            }
+        }
+
         private IEnumerable ObterMensagens()
         {
             var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
@@ -93,10 +97,11 @@ namespace CadAlu.Views.Tabs
                 msg.Tema = r1.GetString(2);
                 msg.Texto = r1.GetString(3);
                 msg.Professor = GetProfessor(r1.GetInt64(4));
-                msg.Data = r1.GetDateTime(5);
+                msg.DataHora = r1.GetDateTime(5);
                 mensagens.Add(msg);
             }
             c1.Close();
+            mensagens.Sort((m, mm) => mm.DataHora.CompareTo(m.DataHora));
             return mensagens;
         }
         private Professor GetProfessor(long id)
@@ -114,8 +119,6 @@ namespace CadAlu.Views.Tabs
             c1.Close();
             return professor;
         }
-
-
 
         void ObterDadosAluno()
         {

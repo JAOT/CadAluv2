@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CadAlu.Models
 {
-    internal class Professor
+    public class Professor
     {
         public string Nome { get; internal set; }
     }

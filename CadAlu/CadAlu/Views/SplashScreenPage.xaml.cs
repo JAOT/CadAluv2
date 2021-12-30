@@ -1,4 +1,5 @@
 ﻿using CadAlu.ViewModels;
+using MySqlConnector;
 using Plugin.Fingerprint;
 using Plugin.Fingerprint.Abstractions;
 using System;
@@ -17,10 +18,27 @@ namespace CadAlu.Views
     {
         public SplashScreenPage()
         {
-            //Preferences.Set("appEmail", string.Empty);
+            Preferences.Set("appEmail", string.Empty);
             InitializeComponent();
             this.BindingContext = new SplashScreenPageViewModel();
-            CheckLogin();
+            _ = LigarBDAsync();
+        }
+
+        private async Task LigarBDAsync()
+        {
+            try
+            {
+                var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+                c1.Open();
+                c1.Close();
+                CheckLogin();
+
+            }
+            catch (Exception)
+            {
+
+                await App.Current.MainPage.DisplayAlert("Info", "Falha de ligação!", "OK");
+            }
         }
 
         private void CheckLogin()
@@ -46,7 +64,7 @@ namespace CadAlu.Views
         }
         private async void FingerprintAuth()
         {
-            var request = new AuthenticationRequestConfiguration("Prove you have fingers!", "Because without it you can't have access");
+            var request = new AuthenticationRequestConfiguration("CadAlu", "Por favor, fazer a autenticação para aceder à plataforma.");
             var result = await CrossFingerprint.Current.AuthenticateAsync(request);
             if (result.Authenticated)
             {
