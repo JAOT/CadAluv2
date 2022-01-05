@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace CadAlu.Views.Tabs
@@ -17,10 +19,27 @@ namespace CadAlu.Views.Tabs
         Escola Escola { get; set; }
         internal Agrupamento Agrupamento { get; private set; }
 
+        ListView lstAvaliacoes = new ListView();
+        ListView lstMensagens = new ListView();
+        Button btnMensagens = new Button();
+        Button btnAvaliacoes = new Button();
+        Button btnSumarios = new Button();
+        SensorSpeed speed = SensorSpeed.UI;
+
         public Principal(Aluno aluno)
         {
+            Accelerometer.ShakeDetected += Accelerometer_ShakeDetected;
+
+
             this.Aluno = aluno;
             ObterDadosAluno();
+
+            lstMensagens.IsPullToRefreshEnabled = true;
+            lstMensagens.RefreshCommand = new Command(() =>
+            {
+                lstMensagens.ItemsSource = ObterMensagens();
+                lstMensagens.IsRefreshing = false;
+            });
 
             StackLayout stackLayout = new StackLayout();
             stackLayout.Margin = new Thickness(20);
@@ -37,25 +56,101 @@ namespace CadAlu.Views.Tabs
             lblTurma.Text = Turma.Nome;
             stackLayout.Children.Add(lblTurma);
 
-            ListView listView = new ListView();
-            listView.ItemTemplate = new DataTemplate(typeof(ListaMensagem));
+            lstMensagens.ItemTemplate = new DataTemplate(typeof(ListaMensagem));
+            lstMensagens.ItemTemplate.SetBinding(ListaMensagem.TextProperty, "Tema");
+            lstMensagens.ItemTemplate.SetBinding(ListaMensagem.DetailProperty, "DataHora");
+            lstMensagens.ItemTapped += lstMensagens_ItemTappedAsync;
+            lstMensagens.ItemsSource = ObterMensagens();
+            lstMensagens.IsVisible = true;
+            stackLayout.Children.Add(lstMensagens);
 
-            listView.ItemTemplate.SetBinding(ListaMensagem.TextProperty, "Tema");
-            listView.ItemTemplate.SetBinding(ListaMensagem.DetailProperty, "DataHora");
-            listView.ItemTapped += ListView_ItemTappedAsync;
-            listView.ItemsSource = ObterMensagens();
-                
+            lstAvaliacoes.ItemTemplate = new DataTemplate(typeof(ListaAvaliacoes));
+            lstAvaliacoes.ItemTemplate.SetBinding(ListaMensagem.TextProperty, "Tipo");
+            lstAvaliacoes.ItemTemplate.SetBinding(ListaMensagem.DetailProperty, "Aval");
+            lstAvaliacoes.ItemTapped += lstAvaliacoes_ItemTappedAsync;
+            lstAvaliacoes.ItemsSource = ObterAvaliacoes();
+            lstAvaliacoes.IsVisible = false;
+            stackLayout.Children.Add(lstAvaliacoes);
 
-            stackLayout.Children.Add(listView);
+            btnAvaliacoes.Text = "Avaliações";
+            btnAvaliacoes.Clicked += BtnAvaliacoes_Clicked;
+            stackLayout.Children.Add(btnAvaliacoes);
+
+            btnSumarios.Text = "Sumários";
+            btnSumarios.Clicked += BtnSumarios_Clicked;
+            stackLayout.Children.Add(btnSumarios);
 
             this.Content = stackLayout;
-
+            ToggleAccelerometer();
         }
 
-        async void ListView_ItemTappedAsync(object sender, ItemTappedEventArgs e)
+
+        public void ToggleAccelerometer()
+        {
+            try
+            {
+                if (Accelerometer.IsMonitoring)
+                    Accelerometer.Stop();
+                else
+                    Accelerometer.Start(speed);
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                // Feature not supported on device
+            }
+            catch (Exception ex)
+            {
+                // Other error has occurred.
+            }
+        }
+
+
+        private void Accelerometer_ShakeDetected(object sender, EventArgs e)
+        {
+            lstMensagens.IsRefreshing = true;
+        }
+
+        async void lstAvaliacoes_ItemTappedAsync(object sender, ItemTappedEventArgs e)
+        {
+            await DisplayAlert("Info", Aluno.Nome, "OK");
+        }
+        
+        private void BtnSumarios_Clicked(object sender, EventArgs e)
+        {
+            //if (lstAvaliacoes.IsVisible == false)
+            //{
+            //    lstAvaliacoes.IsVisible = true;
+            //    lstMensagens.IsVisible = false;
+            //    btnAvaliacoes.Text = "Mensagens";
+            //}
+            //else
+            //{
+            //    lstAvaliacoes.IsVisible = false;
+            //    lstMensagens.IsVisible = true;
+            //    btnAvaliacoes.Text = "Avaliações";
+            //}
+        }
+
+        private void BtnAvaliacoes_Clicked(object sender, EventArgs e)
+        {
+            if (lstAvaliacoes.IsVisible == false)
+            {
+                lstAvaliacoes.IsVisible = true;
+                lstMensagens.IsVisible = false;
+                btnAvaliacoes.Text = "Mensagens";
+            }
+            else
+            {
+                lstAvaliacoes.IsVisible = false;
+                lstMensagens.IsVisible = true;
+                btnAvaliacoes.Text = "Avaliações";
+            }
+        }
+
+        async void lstMensagens_ItemTappedAsync(object sender, ItemTappedEventArgs e)
         {
             Mensagem m = (Mensagem)((ListView)sender).SelectedItem;
-            var msg = await DisplayAlert(m.Tema, m.Texto + "\n\nProfessor: " + m.Professor.Nome + "\n\n" + "Enviado :"+m.DataHora, "Responder", "OK");
+            var msg = await DisplayAlert(m.Tema, m.Texto + "\n\nProfessor: " + m.Professor.Nome + "\n\n" + "Enviado :"+m.DataHora.ToShortDateString(), "Responder", "OK");
             var rTema = "Re: " + m.Tema;
             if (msg == true)
             {
@@ -64,13 +159,13 @@ namespace CadAlu.Views.Tabs
                 {
                     var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
                     connection.Open();
-
+                    var date = DateTime.Now.ToString();
                     var command = connection.CreateCommand();
-                    command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor, datahora) VALUES ('" + Aluno.Id+"', '" + rTema + "', '" + resposta+"', '1', '"+ DateTime.Now+"')";
+                    command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor) VALUES ('" + Aluno.Id+"', '" + rTema + "', '" + resposta+"', '1')";
                     try
                     {
                         var reader = command.ExecuteNonQuery();
-                        //_ = DisplayAlert("Info", "Mensagem Enviada!", "OK");
+                        
                     }
                     catch (Exception ex)
                     {
@@ -78,6 +173,29 @@ namespace CadAlu.Views.Tabs
                     }
                 }
             }
+        }
+        private IEnumerable ObterAvaliacoes()
+        {
+            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            c1.Open();
+            var com1 = c1.CreateCommand();
+            com1.CommandText = "SELECT a.identidade,a.aval, a.tipo, p.disciplina FROM avaliacoes a, professores p WHERE p.identidade = a.avaliador AND a.aluno ='" + Aluno.Id + "'";
+            var r1 = com1.ExecuteReader();
+
+            List<Avaliacao> avaliacoes = new List<Avaliacao>();
+
+            while (r1.Read())
+            {
+                Avaliacao ava = new Avaliacao();
+                ava.Id = r1.GetInt64(0);
+                ava.Aval = r1.GetString(1);
+                ava.Tipo = r1.GetString(2);
+                ava.Disciplina = r1.GetString(3);
+                avaliacoes.Add(ava);
+            }
+            c1.Close();
+
+            return avaliacoes;
         }
 
         private IEnumerable ObterMensagens()

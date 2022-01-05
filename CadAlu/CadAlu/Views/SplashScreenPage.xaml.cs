@@ -18,7 +18,12 @@ namespace CadAlu.Views
     {
         public SplashScreenPage()
         {
-            Preferences.Set("appEmail", string.Empty);
+            //abanar para refrescar mensagens
+            //identificar sensores de autenticação (fingerprint, câmara, pin, padrão)
+            //usar câmara para tirar foto dos alunos
+            //voz?
+
+            //Preferences.Set("appEmail", string.Empty);
             InitializeComponent();
             this.BindingContext = new SplashScreenPageViewModel();
             _ = LigarBDAsync();
