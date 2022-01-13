@@ -1,5 +1,5 @@
 ﻿using CadAlu.Models;
-using CadAlu.Views.Tabs;
+using CadAlu.Views.VistaPrincipal;
 using MySqlConnector;
 using System;
 using System.Collections.Generic;

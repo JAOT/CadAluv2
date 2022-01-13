@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-
-namespace CadAlu.Views.Tabs
+using CadAlu.Views.VistaMensagens;
+namespace CadAlu.Views.VistaPrincipal
 {
     public class Principal : ContentPage
     {
@@ -24,12 +24,12 @@ namespace CadAlu.Views.Tabs
         Button btnMensagens = new Button();
         Button btnAvaliacoes = new Button();
         Button btnSumarios = new Button();
-        SensorSpeed speed = SensorSpeed.UI;
+        SensorSpeed speed = SensorSpeed.Fastest;
 
         public Principal(Aluno aluno)
         {
             Accelerometer.ShakeDetected += Accelerometer_ShakeDetected;
-
+            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
 
             this.Aluno = aluno;
             ObterDadosAluno();
@@ -84,6 +84,12 @@ namespace CadAlu.Views.Tabs
             ToggleAccelerometer();
         }
 
+        private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
+        {
+            var data = e.Reading;
+            Console.WriteLine($"Reading: X: {data.Acceleration.X}, Y: {data.Acceleration.Y}, Z: {data.Acceleration.Z}");
+            // Process Acceleration X, Y, and Z
+        }
 
         public void ToggleAccelerometer()
         {
@@ -147,32 +153,34 @@ namespace CadAlu.Views.Tabs
             }
         }
 
-        async void lstMensagens_ItemTappedAsync(object sender, ItemTappedEventArgs e)
+        void lstMensagens_ItemTappedAsync(object sender, ItemTappedEventArgs e)
         {
             Mensagem m = (Mensagem)((ListView)sender).SelectedItem;
-            var msg = await DisplayAlert(m.Tema, m.Texto + "\n\nProfessor: " + m.Professor.Nome + "\n\n" + "Enviado :"+m.DataHora.ToShortDateString(), "Responder", "OK");
-            var rTema = "Re: " + m.Tema;
-            if (msg == true)
-            {
-               var resposta = await DisplayPromptAsync(rTema, "Mensagem", "Enviar", "Cancelar");
-                if (!string.IsNullOrEmpty(resposta))
-                {
-                    var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
-                    connection.Open();
-                    var date = DateTime.Now.ToString();
-                    var command = connection.CreateCommand();
-                    command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor) VALUES ('" + Aluno.Id+"', '" + rTema + "', '" + resposta+"', '1')";
-                    try
-                    {
-                        var reader = command.ExecuteNonQuery();
+            Application.Current.MainPage = new VistaMensagem(m, Aluno.Id);
+
+            //var msg = await DisplayAlert(m.Tema, m.Texto + "\n\nProfessor: " + m.Professor.Nome + "\n\n" + "Enviado :"+m.DataHora.ToShortDateString(), "Responder", "OK");
+            //var rTema = "Re: " + m.Tema;
+            //if (msg == true)
+            //{
+            //   var resposta = await DisplayPromptAsync(rTema, "Mensagem", "Enviar", "Cancelar");
+            //    if (!string.IsNullOrEmpty(resposta))
+            //    {
+            //        var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            //        connection.Open();
+            //        var date = DateTime.Now.ToString();
+            //        var command = connection.CreateCommand();
+            //        command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor) VALUES ('" + Aluno.Id+"', '" + rTema + "', '" + resposta+"', '1')";
+            //        try
+            //        {
+            //            var reader = command.ExecuteNonQuery();
                         
-                    }
-                    catch (Exception ex)
-                    {
-                        _ = DisplayAlert("Info", "Erro de ligação.", "OK");
-                    }
-                }
-            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            _ = DisplayAlert("Info", "Erro de ligação.", "OK");
+            //        }
+            //    }
+            //}
         }
         private IEnumerable ObterAvaliacoes()
         {
