@@ -21,6 +21,7 @@ namespace CadAlu.Views.VistaPrincipal
 
         ListView lstAvaliacoes = new ListView();
         ListView lstMensagens = new ListView();
+        Button btnCriarNovaMensagem = new Button();
         Button btnMensagens = new Button();
         Button btnAvaliacoes = new Button();
         Button btnSumarios = new Button();
@@ -44,6 +45,7 @@ namespace CadAlu.Views.VistaPrincipal
             StackLayout stackLayout = new StackLayout();
             stackLayout.Margin = new Thickness(20);
             stackLayout.Spacing = 20;
+
             Label lblNomeAgrupamento = new Label();
             lblNomeAgrupamento.Text = Agrupamento.Nome;
             stackLayout.Children.Add(lblNomeAgrupamento);
@@ -72,6 +74,21 @@ namespace CadAlu.Views.VistaPrincipal
             lstAvaliacoes.IsVisible = false;
             stackLayout.Children.Add(lstAvaliacoes);
 
+            StackLayout btnNovaMensagem = new StackLayout { BackgroundColor = Color.Bisque, Orientation= StackOrientation.Horizontal, VerticalOptions = LayoutOptions.End };
+
+
+
+            btnCriarNovaMensagem.Text = "+";
+            btnCriarNovaMensagem.Clicked += BtnCriarNovaMensagem_Clicked;
+            btnCriarNovaMensagem.WidthRequest = 60;
+            btnCriarNovaMensagem.HeightRequest = 60;
+            btnCriarNovaMensagem.CornerRadius = 30;
+            btnNovaMensagem.HorizontalOptions = LayoutOptions.End;
+            btnNovaMensagem.Children.Add(btnCriarNovaMensagem);
+
+            stackLayout.Children.Add(btnNovaMensagem);
+
+
             btnAvaliacoes.Text = "Avaliações";
             btnAvaliacoes.Clicked += BtnAvaliacoes_Clicked;
             stackLayout.Children.Add(btnAvaliacoes);
@@ -82,6 +99,11 @@ namespace CadAlu.Views.VistaPrincipal
 
             this.Content = stackLayout;
             ToggleAccelerometer();
+        }
+
+        private void BtnCriarNovaMensagem_Clicked(object sender, EventArgs e)
+        {
+            Application.Current.MainPage = new VistaNovaMensagem(Aluno);
         }
 
         private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
@@ -205,7 +227,6 @@ namespace CadAlu.Views.VistaPrincipal
 
             return avaliacoes;
         }
-
         private IEnumerable ObterMensagens()
         {
             var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
@@ -245,7 +266,6 @@ namespace CadAlu.Views.VistaPrincipal
             c1.Close();
             return professor;
         }
-
         void ObterDadosAluno()
         {
             var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");

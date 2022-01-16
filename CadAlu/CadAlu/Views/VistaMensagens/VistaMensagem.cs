@@ -133,10 +133,6 @@ namespace CadAlu.Views.VistaMensagens
                 }
             };
             
-            
-            
-
-
             StackLayout allPage = new StackLayout
             {
                 BackgroundColor = Color.LightGray,
