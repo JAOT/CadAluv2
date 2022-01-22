@@ -43,10 +43,8 @@ namespace CadAlu.Views.VistaMensagens
                 }
 
             };
-            this.Content = allPage; ;
+            this.Content = allPage;
         }
-
-
 
         private View AdicionarAssunto()
         {
@@ -154,6 +152,7 @@ namespace CadAlu.Views.VistaMensagens
             mensagem.Placeholder = "Nova mensagem";
             mensagem.PlaceholderColor = Color.LightGray;
             mensagem.VerticalOptions = LayoutOptions.FillAndExpand;
+
             StackLayout middle = new StackLayout
             {
                 BackgroundColor = Color.Bisque,
@@ -225,6 +224,7 @@ namespace CadAlu.Views.VistaMensagens
                     }
 
                 _ = DisplayAlert("Info", "Mensagem enviada.", "OK");
+                Application.Current.MainPage = new MainPage();
 
             }
             else
@@ -235,7 +235,7 @@ namespace CadAlu.Views.VistaMensagens
 
         private void BtnVoltar_Click(object sender, EventArgs e)
         {
-            Application.Current.MainPage = new Principal(Aluno);
+            Application.Current.MainPage = new MainPage();
         }
     }
 }

@@ -14,97 +14,41 @@ namespace CadAlu.Views.VistaMensagens
         public int IdAluno { get; private set; }
 
         Thickness LabelDefault = new Thickness(10);
+        StackLayout stkPrincipal = new StackLayout();
+        StackLayout stkAssunto = new StackLayout();
+        StackLayout stkProfessor = new StackLayout();
+        StackLayout stkTexto = new StackLayout();
+        StackLayout stkBotoes = new StackLayout();
+
+        Editor assunto = new Editor();
+        Editor mensagem = new Editor();
+        Thickness margin = new Thickness(10);
+
         public VistaMensagem(Mensagem m, int idAluno)
         {
             Mensagem = m;
             IdAluno = idAluno;
-                        
-            StackLayout assunto = new StackLayout
+
+            StackLayout allPage = new StackLayout
             {
-                VerticalOptions = LayoutOptions.Start,
-                Orientation = StackOrientation.Vertical,
-                Margin =LabelDefault,
-                Children = {
-                                new Label
-                                {
-                                    Text = "Assunto: ",
-                                    FontAttributes = FontAttributes.Bold,
-                                    FontSize = 24,
-                                    Margin = LabelDefault
-                                },
-                                new Label
-                                {
-                                    Text = m.Tema,
-                                    FontAttributes = FontAttributes.Bold,
-                                    FontSize = 18,
-                                    Margin = LabelDefault
-                                }
-                           }
+                Margin = margin,
+                BackgroundColor = Color.LightGray,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children =
+                {
+                    AdicionarAssunto(),
+                    AdicionarRemetente(),
+                    AdicionarCaixaDeTexto(),
+                    AdicionarBotoes()
+                }
+
             };
+            this.Content = allPage;      
+        }
 
-
-            StackLayout texto = new StackLayout
-            {
-                VerticalOptions = LayoutOptions.Start,
-                Orientation = StackOrientation.Vertical,
-                BackgroundColor = Color.White,
-                Margin = LabelDefault,
-                Children = {
-                                new ScrollView
-                                {
-                                    Orientation = ScrollOrientation.Vertical,
-                                    Content = new Label
-                                    {
-                                        Text = m.Texto,
-                                        FontAttributes = FontAttributes.None,
-                                        FontSize = 16,
-                                        Margin = LabelDefault
-                                    }
-                                }
-                                
-                           }
-            };
-
-            StackLayout remetente = new StackLayout
-            {
-                VerticalOptions = LayoutOptions.Start,
-                Orientation = StackOrientation.Vertical,
-                Margin = LabelDefault,
-                Children = {
-                                new Label
-                                {
-                                    Text = "Enviado por " + m.Professor.Nome + " em " + m.DataHora.ToShortDateString() + " - " + m.DataHora.ToShortTimeString(),
-                                    FontAttributes = FontAttributes.None,
-                                    FontSize = 14,
-                                    Margin = LabelDefault,
-                                    HorizontalTextAlignment = TextAlignment.End,
-                                    VerticalTextAlignment = TextAlignment.End
-                                }
-                           }
-            };
-
-            //Label lblTexto = new Label();
-            //lblTexto.Text = m.Texto;
-            //lblTexto.FontAttributes = FontAttributes.Bold;
-            //lblTexto.BackgroundColor = Color.LightGray;
-            //lblTexto.Margin = LabelDefault;
-
-            //Label lblProfessor = new Label();
-            //lblProfessor.Text = m.Professor.Nome;
-            //lblProfessor.FontAttributes = FontAttributes.Bold;
-            //lblProfessor.BackgroundColor = Color.LightGray;
-            //lblProfessor.Margin = LabelDefault;
-
-            //Label lblDataHora = new Label();
-            //lblDataHora.Text = m.DataHora.ToShortDateString() + " - " + m.DataHora.ToShortTimeString();
-            //lblDataHora.FontAttributes = FontAttributes.Bold;
-            //lblDataHora.BackgroundColor = Color.LightGray;
-            //lblDataHora.Margin = LabelDefault;
-
-
-            StackLayout middle = new StackLayout { BackgroundColor = Color.Bisque, VerticalOptions = LayoutOptions.CenterAndExpand };
-
-
+        private StackLayout AdicionarBotoes()
+        {
             Button btnVoltar = new Button();
             btnVoltar.Text = "Voltar";
             btnVoltar.WidthRequest = 150;
@@ -117,7 +61,8 @@ namespace CadAlu.Views.VistaMensagens
 
             StackLayout bottom = new StackLayout
             {
-                Orientation = StackOrientation.Vertical, VerticalOptions = LayoutOptions.End, Margin = LabelDefault,
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.End,
                 Children =
                 {
                     new StackLayout
@@ -132,19 +77,81 @@ namespace CadAlu.Views.VistaMensagens
                     }
                 }
             };
-            
-            StackLayout allPage = new StackLayout
+            return bottom;
+        }
+
+        private StackLayout AdicionarCaixaDeTexto()
+        {
+            StackLayout texto = new StackLayout
             {
-                BackgroundColor = Color.LightGray,
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Children =
-                {
-                    assunto, texto, remetente, middle, bottom
-                }
-                
+                BackgroundColor = Color.Bisque,
+                Margin = margin,
+                Children = {
+                                new ScrollView
+                                {
+                                    Orientation = ScrollOrientation.Vertical,
+                                    Content = new Label
+                                    {
+                                        Text = Mensagem.Texto,
+                                        FontAttributes = FontAttributes.None,
+                                        FontSize = 16,
+                                        Margin = LabelDefault
+                                    }
+                                }
+
+                           }
             };
-            this.Content = allPage;            
+            return texto;
+        }
+
+        private StackLayout AdicionarRemetente()
+        {
+            StackLayout remetente = new StackLayout
+            {
+                VerticalOptions = LayoutOptions.Start,
+                Orientation = StackOrientation.Vertical,
+                Margin = LabelDefault,
+                Children = {
+                                new Label
+                                {
+                                    Text = "Enviado por " + Mensagem.Professor.Nome + " em " + Mensagem.DataHora.ToShortDateString() + " - " + Mensagem.DataHora.ToShortTimeString(),
+                                    FontAttributes = FontAttributes.None,
+                                    FontSize = 14,
+                                    Margin = LabelDefault,
+                                    HorizontalTextAlignment = TextAlignment.End,
+                                    VerticalTextAlignment = TextAlignment.End
+                                }
+                           }
+            };
+            return remetente;
+        }
+
+        private StackLayout AdicionarAssunto()
+        {
+            StackLayout assunto = new StackLayout
+            {
+                VerticalOptions = LayoutOptions.Start,
+                Orientation = StackOrientation.Vertical,
+                Margin = LabelDefault,
+                Children = {
+                                new Label
+                                {
+                                    Text = "Assunto: ",
+                                    FontAttributes = FontAttributes.Bold,
+                                    FontSize = 24,
+                                    Margin = LabelDefault
+                                },
+                                new Label
+                                {
+                                    Text = Mensagem.Tema,
+                                    FontAttributes = FontAttributes.Bold,
+                                    FontSize = 18,
+                                    Margin = LabelDefault
+                                }
+                           }
+            };
+            return assunto;
         }
 
         private async void BtnResponder_Click(object sender, EventArgs e)

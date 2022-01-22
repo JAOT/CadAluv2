@@ -19,18 +19,23 @@ namespace CadAlu.Views.VistaPrincipal
         Escola Escola { get; set; }
         internal Agrupamento Agrupamento { get; private set; }
 
+        Button btnAvaliacoes = new Button();
+        Button btnSumarios = new Button();
+
+
         ListView lstAvaliacoes = new ListView();
         ListView lstMensagens = new ListView();
         Button btnCriarNovaMensagem = new Button();
         Button btnMensagens = new Button();
-        Button btnAvaliacoes = new Button();
-        Button btnSumarios = new Button();
+
         SensorSpeed speed = SensorSpeed.Fastest;
+        Thickness margin = new Thickness(10);
 
         public Principal(Aluno aluno)
         {
             Accelerometer.ShakeDetected += Accelerometer_ShakeDetected;
             Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
+            ToggleAccelerometer();
 
             this.Aluno = aluno;
             ObterDadosAluno();
@@ -42,29 +47,93 @@ namespace CadAlu.Views.VistaPrincipal
                 lstMensagens.IsRefreshing = false;
             });
 
-            StackLayout stackLayout = new StackLayout();
-            stackLayout.Margin = new Thickness(20);
-            stackLayout.Spacing = 20;
+            StackLayout allPage = new StackLayout
+            {
+                Margin = margin,
+                BackgroundColor = Color.LightGray,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Children =
+                {
+                    AdicionarCabecalho(),
+                    AdicionarListas(),
+                    AdicionarBotaoNovaMensagem(),
+                    AdicionarBotoes()
+                }
 
-            Label lblNomeAgrupamento = new Label();
-            lblNomeAgrupamento.Text = Agrupamento.Nome;
-            stackLayout.Children.Add(lblNomeAgrupamento);
+            };
 
-            Label lblNomeEscola = new Label();
-            lblNomeEscola.Text = Escola.Nome;
-            stackLayout.Children.Add(lblNomeEscola);
+            this.Content = allPage;
+        }
 
-            Label lblTurma = new Label();
-            lblTurma.Text = Turma.Nome;
-            stackLayout.Children.Add(lblTurma);
+        private View AdicionarBotaoNovaMensagem()
+        {
+            btnCriarNovaMensagem.Text = "+";
+            btnCriarNovaMensagem.WidthRequest = 100;
+            btnCriarNovaMensagem.HeightRequest = 100;
+            btnCriarNovaMensagem.CornerRadius = 50;
+            btnCriarNovaMensagem.Clicked += BtnCriarNovaMensagem_Clicked;
 
+            StackLayout novaMensagem = new StackLayout
+            {
+                BackgroundColor = Color.Bisque,
+                Orientation = StackOrientation.Horizontal,
+                VerticalOptions = LayoutOptions.End,
+                HorizontalOptions = LayoutOptions.End,
+                Margin = margin,
+                Children =
+                        {
+                            btnCriarNovaMensagem
+                        }
+            };
+            return novaMensagem;
+         }
+
+        private View AdicionarBotoes()
+        {
+            btnAvaliacoes = new Button
+            {
+                Text = "Avaliações",
+                WidthRequest = 150
+            };
+            btnSumarios = new Button
+            {
+                Text = "Sumários",
+                WidthRequest = 150
+            };
+           
+            btnAvaliacoes.Clicked += BtnAvaliacoes_Clicked;
+            btnSumarios.Clicked += BtnSumarios_Clicked;
+
+            StackLayout bottom = new StackLayout
+            {
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.End,
+                Children =
+                {
+                    new StackLayout
+                    {
+                        Orientation= StackOrientation.Horizontal,
+                        Children =
+                        {
+                            btnAvaliacoes,
+                            btnSumarios,
+                        },
+                         HorizontalOptions = LayoutOptions.CenterAndExpand
+                    }
+                }
+            };
+            return bottom;
+        }
+
+        private View AdicionarListas()
+        {
             lstMensagens.ItemTemplate = new DataTemplate(typeof(ListaMensagem));
             lstMensagens.ItemTemplate.SetBinding(ListaMensagem.TextProperty, "Tema");
             lstMensagens.ItemTemplate.SetBinding(ListaMensagem.DetailProperty, "DataHora");
             lstMensagens.ItemTapped += lstMensagens_ItemTappedAsync;
             lstMensagens.ItemsSource = ObterMensagens();
             lstMensagens.IsVisible = true;
-            stackLayout.Children.Add(lstMensagens);
 
             lstAvaliacoes.ItemTemplate = new DataTemplate(typeof(ListaAvaliacoes));
             lstAvaliacoes.ItemTemplate.SetBinding(ListaMensagem.TextProperty, "Tipo");
@@ -72,77 +141,79 @@ namespace CadAlu.Views.VistaPrincipal
             lstAvaliacoes.ItemTapped += lstAvaliacoes_ItemTappedAsync;
             lstAvaliacoes.ItemsSource = ObterAvaliacoes();
             lstAvaliacoes.IsVisible = false;
-            stackLayout.Children.Add(lstAvaliacoes);
+            
+            StackLayout listas = new StackLayout
+            {
+                Margin = margin,
+                Children =
+                {
+                    lstMensagens, lstAvaliacoes
+                }
 
-            StackLayout btnNovaMensagem = new StackLayout { BackgroundColor = Color.Bisque, Orientation= StackOrientation.Horizontal, VerticalOptions = LayoutOptions.End };
+            };
+            return listas;
+        }
 
-
-
-            btnCriarNovaMensagem.Text = "+";
-            btnCriarNovaMensagem.Clicked += BtnCriarNovaMensagem_Clicked;
-            btnCriarNovaMensagem.WidthRequest = 60;
-            btnCriarNovaMensagem.HeightRequest = 60;
-            btnCriarNovaMensagem.CornerRadius = 30;
-            btnNovaMensagem.HorizontalOptions = LayoutOptions.End;
-            btnNovaMensagem.Children.Add(btnCriarNovaMensagem);
-
-            stackLayout.Children.Add(btnNovaMensagem);
-
-
-            btnAvaliacoes.Text = "Avaliações";
-            btnAvaliacoes.Clicked += BtnAvaliacoes_Clicked;
-            stackLayout.Children.Add(btnAvaliacoes);
-
-            btnSumarios.Text = "Sumários";
-            btnSumarios.Clicked += BtnSumarios_Clicked;
-            stackLayout.Children.Add(btnSumarios);
-
-            this.Content = stackLayout;
-            ToggleAccelerometer();
+        private View AdicionarCabecalho()
+        {
+            StackLayout cabecalho = new StackLayout
+            {
+                Margin = margin,
+                Children =
+                {
+                    new Label
+                    {
+                        Text = Agrupamento.Nome
+                    },
+                    new Label
+                    {
+                        Text=Escola.Nome
+                    },
+                    new Label
+                    {
+                        Text=Turma.Nome
+                    }
+                }
+            };
+            return cabecalho;
         }
 
         private void BtnCriarNovaMensagem_Clicked(object sender, EventArgs e)
         {
             Application.Current.MainPage = new VistaNovaMensagem(Aluno);
         }
-
         private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
         {
             var data = e.Reading;
             Console.WriteLine($"Reading: X: {data.Acceleration.X}, Y: {data.Acceleration.Y}, Z: {data.Acceleration.Z}");
             // Process Acceleration X, Y, and Z
         }
-
         public void ToggleAccelerometer()
         {
-            try
-            {
-                if (Accelerometer.IsMonitoring)
-                    Accelerometer.Stop();
-                else
-                    Accelerometer.Start(speed);
-            }
-            catch (FeatureNotSupportedException fnsEx)
-            {
-                // Feature not supported on device
-            }
-            catch (Exception ex)
-            {
-                // Other error has occurred.
-            }
+            //try
+            //{
+            //    if (Accelerometer.IsMonitoring)
+            //        //Accelerometer.Stop();
+            //    else
+            //        Accelerometer.Start(speed);
+            //}
+            //catch (FeatureNotSupportedException fnsEx)
+            //{
+            //    // Feature not supported on device
+            //}
+            //catch (Exception ex)
+            //{
+            //    // Other error has occurred.
+            //}
         }
-
-
         private void Accelerometer_ShakeDetected(object sender, EventArgs e)
         {
             lstMensagens.IsRefreshing = true;
         }
-
         async void lstAvaliacoes_ItemTappedAsync(object sender, ItemTappedEventArgs e)
         {
             await DisplayAlert("Info", Aluno.Nome, "OK");
         }
-        
         private void BtnSumarios_Clicked(object sender, EventArgs e)
         {
             //if (lstAvaliacoes.IsVisible == false)
@@ -158,7 +229,6 @@ namespace CadAlu.Views.VistaPrincipal
             //    btnAvaliacoes.Text = "Avaliações";
             //}
         }
-
         private void BtnAvaliacoes_Clicked(object sender, EventArgs e)
         {
             if (lstAvaliacoes.IsVisible == false)
@@ -174,7 +244,6 @@ namespace CadAlu.Views.VistaPrincipal
                 btnAvaliacoes.Text = "Avaliações";
             }
         }
-
         void lstMensagens_ItemTappedAsync(object sender, ItemTappedEventArgs e)
         {
             Mensagem m = (Mensagem)((ListView)sender).SelectedItem;
