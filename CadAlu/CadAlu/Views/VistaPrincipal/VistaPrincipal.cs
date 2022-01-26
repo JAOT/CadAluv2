@@ -3,42 +3,34 @@ using MySqlConnector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using CadAlu.Views.VistaMensagens;
+using System.IO;
+using CadAlu.Cells;
+
 namespace CadAlu.Views.VistaPrincipal
 {
-    public class Principal : ContentPage
+    public class VistaPrincipal : ContentPage
     {
-        public Aluno Aluno { get; set; }
-        Turma Turma { get; set; }
-        Escola Escola { get; set; }
-        internal Agrupamento Agrupamento { get; private set; }
+        public Aluno Aluno                  { get; set; }
+        Turma Turma                         { get; set; }
+        Escola Escola                       { get; set; }
+        internal Agrupamento Agrupamento    { get; private set; }
+        Button btnAvaliacoes                = new Button();
+        Button btnSumarios                  = new Button();
+        ListView lstAvaliacoes              = new ListView();
+        ListView lstMensagens               = new ListView();
+        Button btnCriarNovaMensagem         = new Button();
+        ImageButton btnTiraFoto             = new ImageButton();
+        Thickness margin                    = new Thickness(10);
 
-        Button btnAvaliacoes = new Button();
-        Button btnSumarios = new Button();
-
-
-        ListView lstAvaliacoes = new ListView();
-        ListView lstMensagens = new ListView();
-        Button btnCriarNovaMensagem = new Button();
-        Button btnMensagens = new Button();
-
-        SensorSpeed speed = SensorSpeed.Fastest;
-        Thickness margin = new Thickness(10);
-
-        public Principal(Aluno aluno)
+        public VistaPrincipal(Aluno aluno)
         {
-            Accelerometer.ShakeDetected += Accelerometer_ShakeDetected;
-            Accelerometer.ReadingChanged += Accelerometer_ReadingChanged;
-            ToggleAccelerometer();
-
             this.Aluno = aluno;
             ObterDadosAluno();
+
+            btnTiraFoto.Clicked += BtnTiraFoto_Clicked;
 
             lstMensagens.IsPullToRefreshEnabled = true;
             lstMensagens.RefreshCommand = new Command(() =>
@@ -46,6 +38,8 @@ namespace CadAlu.Views.VistaPrincipal
                 lstMensagens.ItemsSource = ObterMensagens();
                 lstMensagens.IsRefreshing = false;
             });
+            lstMensagens.HasUnevenRows = true;
+            lstMensagens.RowHeight = 30;
 
             StackLayout allPage = new StackLayout
             {
@@ -60,12 +54,26 @@ namespace CadAlu.Views.VistaPrincipal
                     AdicionarBotaoNovaMensagem(),
                     AdicionarBotoes()
                 }
-
             };
 
             this.Content = allPage;
+            InserirFotosNoBotao();
         }
+        private void InserirFotosNoBotao()
+        {
+            var fotoBotao = Preferences.Get("Aluno" + Aluno.Id, String.Empty);
+            if (!string.IsNullOrWhiteSpace(fotoBotao))
+            {
+                Image image = new Image
+                {
+                    Source = fotoBotao,
+                    HeightRequest = btnTiraFoto.Height,
+                    WidthRequest = btnTiraFoto.Width
+                };
+                btnTiraFoto.Source = fotoBotao;
 
+            }
+        }
         private View AdicionarBotaoNovaMensagem()
         {
             btnCriarNovaMensagem.Text = "+";
@@ -88,7 +96,6 @@ namespace CadAlu.Views.VistaPrincipal
             };
             return novaMensagem;
          }
-
         private View AdicionarBotoes()
         {
             btnAvaliacoes = new Button
@@ -125,15 +132,11 @@ namespace CadAlu.Views.VistaPrincipal
             };
             return bottom;
         }
-
         private View AdicionarListas()
         {
-            lstMensagens.ItemTemplate = new DataTemplate(typeof(ListaMensagem));
-            lstMensagens.ItemTemplate.SetBinding(ListaMensagem.TextProperty, "Tema");
-            lstMensagens.ItemTemplate.SetBinding(ListaMensagem.DetailProperty, "DataHora");
-            lstMensagens.ItemTapped += lstMensagens_ItemTappedAsync;
+            lstMensagens.ItemTemplate = new SelectorTemplateMensagens();
             lstMensagens.ItemsSource = ObterMensagens();
-            lstMensagens.IsVisible = true;
+            lstMensagens.ItemTapped += lstMensagens_ItemTappedAsync;
 
             lstAvaliacoes.ItemTemplate = new DataTemplate(typeof(ListaAvaliacoes));
             lstAvaliacoes.ItemTemplate.SetBinding(ListaMensagem.TextProperty, "Tipo");
@@ -144,71 +147,98 @@ namespace CadAlu.Views.VistaPrincipal
             
             StackLayout listas = new StackLayout
             {
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
                 Margin = margin,
                 Children =
                 {
                     lstMensagens, lstAvaliacoes
                 }
-
             };
             return listas;
         }
-
         private View AdicionarCabecalho()
         {
+            btnTiraFoto = new ImageButton
+            {
+                HorizontalOptions = LayoutOptions.End,
+                WidthRequest = 80,
+                HeightRequest = 80,
+                CornerRadius = 40
+            };
+
             StackLayout cabecalho = new StackLayout
             {
+                BackgroundColor = Color.Aqua,
+                Orientation = StackOrientation.Horizontal,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
                 Margin = margin,
                 Children =
                 {
-                    new Label
+                    new StackLayout
                     {
-                        Text = Agrupamento.Nome
+                        HorizontalOptions = LayoutOptions.CenterAndExpand,
+                        BackgroundColor = Color.Bisque,
+                        Children =
+                        {
+                            new StackLayout
+                            {
+                                Children =
+                                {
+                                    new Label
+                                    {
+                                        Text = Agrupamento.Nome
+                                    },
+                                    new Label
+                                    {
+                                        Text=Escola.Nome
+                                    },
+                                    new Label
+                                    {
+                                        Text=Turma.Nome
+                                    }
+                                }
+                            }
+                        }
                     },
-                    new Label
+                    new StackLayout
                     {
-                        Text=Escola.Nome
-                    },
-                    new Label
-                    {
-                        Text=Turma.Nome
+                        BackgroundColor = Color.Bisque,
+                        HorizontalOptions = LayoutOptions.End,
+                        Children =
+                        {
+                            btnTiraFoto
+                        }
                     }
                 }
             };
             return cabecalho;
         }
+        private async void BtnTiraFoto_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                var foto = await MediaPicker.CapturePhotoAsync();
+                if (foto != null)
+                {
+                    var f = Path.Combine(FileSystem.CacheDirectory, foto.FileName);
+                    using (var stream = await foto.OpenReadAsync())
+                        using (var newStream = File.OpenWrite(f))
+                        await stream.CopyToAsync(newStream);
+                    Preferences.Set("Aluno"+Aluno.Id, f);
 
+                    InserirFotosNoBotao();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
         private void BtnCriarNovaMensagem_Clicked(object sender, EventArgs e)
         {
             Application.Current.MainPage = new VistaNovaMensagem(Aluno);
-        }
-        private void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
-        {
-            var data = e.Reading;
-            Console.WriteLine($"Reading: X: {data.Acceleration.X}, Y: {data.Acceleration.Y}, Z: {data.Acceleration.Z}");
-            // Process Acceleration X, Y, and Z
-        }
-        public void ToggleAccelerometer()
-        {
-            //try
-            //{
-            //    if (Accelerometer.IsMonitoring)
-            //        //Accelerometer.Stop();
-            //    else
-            //        Accelerometer.Start(speed);
-            //}
-            //catch (FeatureNotSupportedException fnsEx)
-            //{
-            //    // Feature not supported on device
-            //}
-            //catch (Exception ex)
-            //{
-            //    // Other error has occurred.
-            //}
-        }
-        private void Accelerometer_ShakeDetected(object sender, EventArgs e)
-        {
-            lstMensagens.IsRefreshing = true;
         }
         async void lstAvaliacoes_ItemTappedAsync(object sender, ItemTappedEventArgs e)
         {
@@ -247,31 +277,16 @@ namespace CadAlu.Views.VistaPrincipal
         void lstMensagens_ItemTappedAsync(object sender, ItemTappedEventArgs e)
         {
             Mensagem m = (Mensagem)((ListView)sender).SelectedItem;
-            Application.Current.MainPage = new VistaMensagem(m, Aluno.Id);
+            //marcar mensagem como lida
+            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            c1.Open();
+            var com1 = c1.CreateCommand();
+            com1.CommandText = "UPDATE mensagens  SET Lida = '1' WHERE IDENTIDADE = '" + m.Id + "'";
+            com1.ExecuteNonQuery();
+            c1.Close();
 
-            //var msg = await DisplayAlert(m.Tema, m.Texto + "\n\nProfessor: " + m.Professor.Nome + "\n\n" + "Enviado :"+m.DataHora.ToShortDateString(), "Responder", "OK");
-            //var rTema = "Re: " + m.Tema;
-            //if (msg == true)
-            //{
-            //   var resposta = await DisplayPromptAsync(rTema, "Mensagem", "Enviar", "Cancelar");
-            //    if (!string.IsNullOrEmpty(resposta))
-            //    {
-            //        var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
-            //        connection.Open();
-            //        var date = DateTime.Now.ToString();
-            //        var command = connection.CreateCommand();
-            //        command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor) VALUES ('" + Aluno.Id+"', '" + rTema + "', '" + resposta+"', '1')";
-            //        try
-            //        {
-            //            var reader = command.ExecuteNonQuery();
-                        
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            _ = DisplayAlert("Info", "Erro de ligação.", "OK");
-            //        }
-            //    }
-            //}
+
+            Application.Current.MainPage = new VistaMensagem(m, Aluno.Id);
         }
         private IEnumerable ObterAvaliacoes()
         {
@@ -312,8 +327,10 @@ namespace CadAlu.Views.VistaPrincipal
                 msg.Id = r1.GetInt64(0);
                 msg.Tema = r1.GetString(2);
                 msg.Texto = r1.GetString(3);
-                msg.Professor = GetProfessor(r1.GetInt64(4));
+                msg.Professor = r1.IsDBNull(4) ? null : GetProfessor(r1.GetInt64(4));
                 msg.DataHora = r1.GetDateTime(5);
+                msg.Lida = r1.GetInt64(6);
+                msg.Pai = r1.IsDBNull(7) ? null : GetPai(r1.GetInt64(7));
                 mensagens.Add(msg);
             }
             c1.Close();
@@ -330,10 +347,28 @@ namespace CadAlu.Views.VistaPrincipal
             Professor professor = new Professor();
             while (r1.Read())
             {
+                professor.Id = r1.GetInt16(0);
                 professor.Nome = r1.GetString(1);
             }
             c1.Close();
             return professor;
+        }
+        private Pai GetPai(long id)
+        {
+            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            c1.Open();
+            var com1 = c1.CreateCommand();
+            com1.CommandText = "SELECT * FROM pais WHERE identidade = '" + id + "'";
+            var r1 = com1.ExecuteReader();
+            Pai pai = new Pai();
+            while (r1.Read())
+            {
+                pai.Id = r1.GetInt16(0);
+                pai.Nome = r1.GetString(1);
+                
+            }
+            c1.Close();
+            return pai;
         }
         void ObterDadosAluno()
         {

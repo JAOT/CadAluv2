@@ -1,5 +1,6 @@
 ﻿using CadAlu.ViewModels;
 using MySqlConnector;
+using Plugin.Connectivity;
 using Plugin.Fingerprint;
 using Plugin.Fingerprint.Abstractions;
 using System;
@@ -31,18 +32,26 @@ namespace CadAlu.Views
 
         private async Task LigarBDAsync()
         {
-            try
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
-                var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
-                c1.Open();
-                c1.Close();
-                CheckLogin();
-
+                bool isLive = await CrossConnectivity.Current.IsRemoteReachable("192.168.1.219");
+                if (isLive)
+                {
+                    var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+                    c1.Open();
+                    c1.Close();
+                    CheckLogin();
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Info", "Sem ligação ao servidor!", "OK");
+                    Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
+                }
             }
-            catch (Exception)
+            else
             {
-
-                await App.Current.MainPage.DisplayAlert("Info", "Falha de ligação!", "OK");
+                await App.Current.MainPage.DisplayAlert("Info", "Sem ligação de internet!", "OK");
+                Android.OS.Process.KillProcess(Android.OS.Process.MyPid());
             }
         }
 
@@ -64,23 +73,26 @@ namespace CadAlu.Views
         private async void LoginInicial()
         {
             IsVisible = false;
-            //Shell.Current.GoToAsync(nameof(OneTimeLogin));
+
             await Navigation.PushAsync(new OneTimeLogin());
         }
         private async void FingerprintAuth()
         {
-            var request = new AuthenticationRequestConfiguration("CadAlu", "Por favor, fazer a autenticação para aceder à plataforma.");
+            var biometria = await CrossFingerprint.Current.IsAvailableAsync();
+            var b = await CrossFingerprint.Current.GetAuthenticationTypeAsync();
+            if (!biometria)
+            {
+                await DisplayAlert("Aviso", "Não existem métodos de autenticação biométrica configurados.", "Ok");
+            }
+            var request = new AuthenticationRequestConfiguration("CadAlu", "Por favor, fazer a autenticação para aceder à plataforma.")
+            {
+                AllowAlternativeAuthentication = true
+            };
             var result = await CrossFingerprint.Current.AuthenticateAsync(request);
             if (result.Authenticated)
             {
-                //await App.Current.MainPage.DisplayAlert("Info", "Olá!", "OK");
                 await Navigation.PopAsync();
                 Application.Current.MainPage = new MainPage();
-                //await Navigation.PushAsync((new AboutPage()));
-            }
-            else
-            {
-                // not allowed to do secret stuff :(
             }
         }
     }

@@ -21,7 +21,6 @@ namespace CadAlu.Views
             InitializeComponent();
             //obter os filhos
             ProcurarFilhos();
-            //this.Children.Add(new Principal() { Title = "Principal" });
         }
         private void ProcurarFilhos()
         {
@@ -40,7 +39,7 @@ namespace CadAlu.Views
                 aluno.Id = reader.GetInt32("identidade");
                 aluno.Nome = reader.GetString("nome");
                 aluno.IdTurma = reader.GetInt32("turma");
-                Children.Add(new Principal(aluno) { Title = aluno.Nome});
+                Children.Add(new VistaPrincipal.VistaPrincipal(aluno) { Title = aluno.Nome});
             }
         }
     }

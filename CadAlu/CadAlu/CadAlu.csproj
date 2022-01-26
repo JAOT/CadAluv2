@@ -17,6 +17,7 @@
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.1.2" />
     <PackageReference Include="Plugin.Fingerprint" Version="2.1.4" />
+    <PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
@@ -46,7 +47,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\NewFolder\" />
     <Folder Include="Views\VistaAvaliacoes\" />
   </ItemGroup>
 </Project>

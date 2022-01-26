@@ -14,11 +14,6 @@ namespace CadAlu.Views.VistaMensagens
         public int IdAluno { get; private set; }
 
         Thickness LabelDefault = new Thickness(10);
-        StackLayout stkPrincipal = new StackLayout();
-        StackLayout stkAssunto = new StackLayout();
-        StackLayout stkProfessor = new StackLayout();
-        StackLayout stkTexto = new StackLayout();
-        StackLayout stkBotoes = new StackLayout();
 
         Editor assunto = new Editor();
         Editor mensagem = new Editor();
@@ -179,8 +174,7 @@ namespace CadAlu.Views.VistaMensagens
                 }
             }
         }
-
-            private void BtnVoltar_Click(object sender, EventArgs e)
+        private void BtnVoltar_Click(object sender, EventArgs e)
         {
             Application.Current.MainPage = new MainPage();
         }

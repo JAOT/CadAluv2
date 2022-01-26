@@ -11,5 +11,16 @@ namespace CadAlu.Models
         public string Texto { get; internal set; }
         public Professor Professor { get; internal set; }
         public DateTime DataHora { get; internal set; }
+        public Pai Pai { get; internal set; }
+        public Mensagem Parente { get; internal set; }
+        public long Aluno { get; internal set; }
+        public long Lida { get; internal set; }
+        public string NomeProfessor { get; private set; }
+
+        public Mensagem()
+        {
+
+        }
+
     }
 }

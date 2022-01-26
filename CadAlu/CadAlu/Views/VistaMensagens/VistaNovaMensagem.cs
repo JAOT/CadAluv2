@@ -15,12 +15,6 @@ namespace CadAlu.Views.VistaMensagens
         public Aluno Aluno { get; }
         public int ProfessorID { get; private set; }
 
-        StackLayout stkPrincipal = new StackLayout();
-        StackLayout stkAssunto = new StackLayout();
-        StackLayout stkProfessor = new StackLayout();
-        StackLayout stkTexto = new StackLayout();
-        StackLayout stkBotoes = new StackLayout();
-
         Editor assunto = new Editor();
         Editor mensagem = new Editor();
         Thickness margin = new Thickness(10);
@@ -41,7 +35,6 @@ namespace CadAlu.Views.VistaMensagens
                     AdicionarCaixaDeTexto(),
                     AdicionarBotoes()
                 }
-
             };
             this.Content = allPage;
         }
@@ -138,14 +131,6 @@ namespace CadAlu.Views.VistaMensagens
                 }
                 connection.Close();
                 return nomes;
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    _ = DisplayAlert("Info", "Erro de ligação.", "OK");
-            //}
-
-            return null;
         }
         private View AdicionarCaixaDeTexto()
         {
@@ -208,24 +193,24 @@ namespace CadAlu.Views.VistaMensagens
         {
             if (!string.IsNullOrEmpty(assunto.Text) && !string.IsNullOrEmpty(mensagem.Text))
             {
-                    var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
-                    connection.Open();
-                    var date = DateTime.Now.ToString();
-                    var command = connection.CreateCommand();
-                    command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor) VALUES ('" + Aluno.Id + "', '" + assunto.Text + "', '" + this.mensagem.Text + "', "+ ProfessorID + ")";
-                    try
-                    {
-                        var reader = command.ExecuteNonQuery();
+                var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+                connection.Open();
+                var command = connection.CreateCommand();
+                var cmd = "INSERT INTO MENSAGENS (aluno, tema, texto, professor, lida, pai) VALUES ('" + Aluno.Id + "', '" + assunto.Text + "', '" + mensagem.Text + "', " + ProfessorID + ", 1, 1)";
+                command.CommandText = cmd;
+                try
+                {
+                    var reader = command.ExecuteNonQuery();
+                    _ = DisplayAlert("Info", "Mensagem enviada.", "OK");
 
-                    }
-                    catch (Exception ex)
-                    {
-                        _ = DisplayAlert("Info", "Erro de ligação.", "OK");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    var exx= ex;
+                    _ = DisplayAlert("Info", "Erro de ligação.", "OK");
+                }
 
-                _ = DisplayAlert("Info", "Mensagem enviada.", "OK");
                 Application.Current.MainPage = new MainPage();
-
             }
             else
             {
