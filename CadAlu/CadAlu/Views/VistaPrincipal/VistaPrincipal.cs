@@ -30,7 +30,7 @@ namespace CadAlu.Views.VistaPrincipal
             this.Aluno = aluno;
             ObterDadosAluno();
 
-            btnTiraFoto.Clicked += BtnTiraFoto_Clicked;
+            //btnTiraFoto.Clicked += BtnTiraFoto_Clicked;
 
             lstMensagens.IsPullToRefreshEnabled = true;
             lstMensagens.RefreshCommand = new Command(() =>
@@ -134,6 +134,14 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private View AdicionarListas()
         {
+
+            Picker picker = new Picker
+            {
+                Title = "Disciplina",
+                ItemDisplayBinding = new Binding("Nome"),
+                ItemsSource = ObterDisciplinas()
+            };
+
             lstMensagens.ItemTemplate = new SelectorTemplateMensagens();
             lstMensagens.ItemsSource = ObterMensagens();
             lstMensagens.ItemTapped += lstMensagens_ItemTappedAsync;
@@ -152,66 +160,53 @@ namespace CadAlu.Views.VistaPrincipal
                 Margin = margin,
                 Children =
                 {
-                    lstMensagens, lstAvaliacoes
+                    picker, lstMensagens, lstAvaliacoes
                 }
             };
             return listas;
         }
+
         private View AdicionarCabecalho()
         {
             btnTiraFoto = new ImageButton
             {
-                HorizontalOptions = LayoutOptions.End,
+                //HorizontalOptions = LayoutOptions.End,
                 WidthRequest = 80,
                 HeightRequest = 80,
                 CornerRadius = 40
             };
-
-            StackLayout cabecalho = new StackLayout
+            btnTiraFoto.Clicked += BtnTiraFoto_Clicked;
+            Grid cabecalho = new Grid
             {
-                BackgroundColor = Color.Aqua,
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Margin = margin,
-                Children =
+                BackgroundColor = Color.AliceBlue,
+                RowDefinitions = new RowDefinitionCollection
                 {
-                    new StackLayout
-                    {
-                        HorizontalOptions = LayoutOptions.CenterAndExpand,
-                        BackgroundColor = Color.Bisque,
-                        Children =
-                        {
-                            new StackLayout
-                            {
-                                Children =
-                                {
-                                    new Label
-                                    {
-                                        Text = Agrupamento.Nome
-                                    },
-                                    new Label
-                                    {
-                                        Text=Escola.Nome
-                                    },
-                                    new Label
-                                    {
-                                        Text=Turma.Nome
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    new StackLayout
-                    {
-                        BackgroundColor = Color.Bisque,
-                        HorizontalOptions = LayoutOptions.End,
-                        Children =
-                        {
-                            btnTiraFoto
-                        }
-                    }
+                    new RowDefinition { Height = 80 },
+                },
+                ColumnDefinitions = new ColumnDefinitionCollection
+                {
+
+                    new ColumnDefinition{ },
+                    new ColumnDefinition{Width = 80 }
                 }
             };
+            Grid infoEscolar = new Grid
+            {
+                RowDefinitions = new RowDefinitionCollection
+                {
+                    new RowDefinition{},
+                    new RowDefinition{},
+                    new RowDefinition{}
+                }
+            };
+            infoEscolar.Children.Add(new Label { Text = Agrupamento.Nome}, 0, 0);
+            infoEscolar.Children.Add(new Label { Text = Aluno.Turma.Escola.Nome }, 0, 1);
+            infoEscolar.Children.Add(new Label { Text = Aluno.Turma.Nome }, 0, 2);
+
+
+            cabecalho.Children.Add(infoEscolar, 0, 0);
+            cabecalho.Children.Add(btnTiraFoto, 1, 0);
+
             return cabecalho;
         }
         private async void BtnTiraFoto_Clicked(object sender, EventArgs e)
@@ -374,48 +369,104 @@ namespace CadAlu.Views.VistaPrincipal
         {
             var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
             c1.Open();
+
+            //Obter dados do aluno, turma, escola, agrupamento
+
             var com1 = c1.CreateCommand();
-            com1.CommandText = "SELECT * FROM turmas WHERE identidade = '" + Aluno.IdTurma + "'";
+
+            com1.CommandText = "SELECT * FROM alunos WHERE identidade = '" + Aluno.Id + "'";
             var r1 = com1.ExecuteReader();
+            Aluno = new Aluno();
 
             while (r1.Read())
             {
+                Aluno.Id = r1.GetInt32(0);
+                Aluno.Nome = r1.GetString(1);
+                Aluno.Turma = ObterTurma(r1.GetInt32(2));
+            }
+
+            c1.Close();
+        }
+        private Turma ObterTurma(int v)
+        {
+            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            c1.Open();
+            var com1 = c1.CreateCommand();
+
+            com1.CommandText = "SELECT * FROM turmas WHERE identidade = '" + v + "'";
+            var r1 = com1.ExecuteReader();
                 Turma = new Turma();
+
+            while (r1.Read())
+            {
                 Turma.Id = r1.GetInt32(0);
                 Turma.Nome = r1.GetString(1);
-                Turma.Escola = r1.GetInt32(2);
+                Turma.Escola = ObterEscola(r1.GetInt32(2));
             }
             c1.Close();
 
-            var c2 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
-            c2.Open();
-            var com2 = c2.CreateCommand();
-            com2.CommandText = "SELECT * FROM escolas WHERE identidade = '" + Turma.Escola + "'";
+            return Turma;
+        }
+        private Escola ObterEscola(int v)
+        {
+            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            c1.Open();
+            var com2 = c1.CreateCommand();
+            com2.CommandText = "SELECT * FROM escolas WHERE identidade = '" + v + "'";
             var r2 = com2.ExecuteReader();
+            Escola = new Escola();
 
             while (r2.Read())
             {
-                Escola = new Escola();
                 Escola.Id = r2.GetInt32(0);
                 Escola.Nome = r2.GetString(1);
-                Escola.Agrupamento = r2.GetInt32(2);
+                Escola.Agrupamento = ObterAgrupamento(r2.GetInt32(2));
+
             }
-            c2.Close();
+            c1.Close();
 
-            var c3 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
-            c3.Open();
-            var com3 = c3.CreateCommand();
+            return Escola;
+        }
+        private Agrupamento ObterAgrupamento(int v)
+        {
+            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            c1.Open();
+            var com3 = c1.CreateCommand();
 
-            com3.CommandText = "SELECT * FROM agrupamentos WHERE identidade = '" + Escola.Id + "'";
+            com3.CommandText = "SELECT * FROM agrupamentos WHERE identidade = '" + v + "'";
             var r3 = com3.ExecuteReader();
+            Agrupamento = new Agrupamento();
 
             while (r3.Read())
             {
-                Agrupamento = new Agrupamento();
                 Agrupamento.Id = r3.GetInt32(0);
                 Agrupamento.Nome = r3.GetString(1);
             }
-            c3.Close();
+            c1.Close();
+
+            return Agrupamento;
+        }
+        private List<Disciplina> ObterDisciplinas()
+        {
+            List<Disciplina> disciplinas = new List<Disciplina>();
+            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            c1.Open();
+            var com3 = c1.CreateCommand();
+
+            com3.CommandText = "SELECT * FROM disciplinas WHERE turma = '" + Aluno.Turma.Id + "'";
+            var r3 = com3.ExecuteReader();
+            while (r3.Read())
+            {
+                disciplinas.Add (new Disciplina
+                {
+                    Id = r3.GetInt32(0),
+                    Turma = ObterTurma(r3.GetInt32(1)),
+                    Professor = GetProfessor(r3.GetInt32(2)),
+                    Nome = r3.GetString(3)
+                });
+            }
+            c1.Close();
+            return disciplinas;
         }
     }
 }

@@ -8,6 +8,6 @@ namespace CadAlu.Models
     {
         public int Id { get; internal set; }
         public string Nome { get; internal set; }
-        public int Agrupamento { get; internal set; }
+        public Agrupamento Agrupamento { get; internal set; }
     }
 }

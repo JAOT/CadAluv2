@@ -4,12 +4,11 @@ using System.Text;
 
 namespace CadAlu.Models
 {
-    public class Aluno
+    internal class Disciplina
     {
         public int Id { get; set; }
+        public Turma Turma { get; set; }
+        public  Professor Professor { get; set; }
         public string Nome { get; set; }
-        public int IdPai1 { get; set;}
-        public int IdPai2 { get; set; }
-        public Turma  Turma { get; set; }
     }
 }
