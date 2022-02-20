@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using CadAlu.Views.VistaMensagens;
+using CadAlu.Views.VistaEscola;
 using System.IO;
 using CadAlu.Cells;
 
@@ -29,8 +30,6 @@ namespace CadAlu.Views.VistaPrincipal
         {
             this.Aluno = aluno;
             ObterDadosAluno();
-
-            //btnTiraFoto.Clicked += BtnTiraFoto_Clicked;
 
             lstMensagens.IsPullToRefreshEnabled = true;
             lstMensagens.RefreshCommand = new Command(() =>
@@ -170,7 +169,6 @@ namespace CadAlu.Views.VistaPrincipal
         {
             btnTiraFoto = new ImageButton
             {
-                //HorizontalOptions = LayoutOptions.End,
                 WidthRequest = 80,
                 HeightRequest = 80,
                 CornerRadius = 40
@@ -207,8 +205,18 @@ namespace CadAlu.Views.VistaPrincipal
             cabecalho.Children.Add(infoEscolar, 0, 0);
             cabecalho.Children.Add(btnTiraFoto, 1, 0);
 
+            TapGestureRecognizer tap = new TapGestureRecognizer();
+            tap.Tapped += CabecalhoTapped;
+            cabecalho.GestureRecognizers.Add(tap);
+
             return cabecalho;
         }
+
+        private void CabecalhoTapped(object sender, EventArgs e)
+        {
+            Application.Current.MainPage = new VistaEscola.VistaEscola(Escola);
+        }
+
         private async void BtnTiraFoto_Clicked(object sender, EventArgs e)
         {
             try
@@ -421,6 +429,8 @@ namespace CadAlu.Views.VistaPrincipal
                 Escola.Id = r2.GetInt32(0);
                 Escola.Nome = r2.GetString(1);
                 Escola.Agrupamento = ObterAgrupamento(r2.GetInt32(2));
+                Escola.Morada = r2.GetString(3);
+                Escola.Telefone = r2.GetInt32(4);
 
             }
             c1.Close();
@@ -441,6 +451,9 @@ namespace CadAlu.Views.VistaPrincipal
             {
                 Agrupamento.Id = r3.GetInt32(0);
                 Agrupamento.Nome = r3.GetString(1);
+                Agrupamento.Morada = r3.GetString(2);
+                Agrupamento.Telefone = r3.GetInt32(3);
+                Agrupamento.Mapa = r3.GetString(4);
             }
             c1.Close();
 

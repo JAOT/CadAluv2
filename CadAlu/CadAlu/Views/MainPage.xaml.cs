@@ -38,7 +38,6 @@ namespace CadAlu.Views
                 Aluno aluno = new Aluno();
                 aluno.Id = reader.GetInt32("identidade");
                 aluno.Nome = reader.GetString("nome");
-                //aluno.Turma = (Turma)reader[4];
                 Children.Add(new VistaPrincipal.VistaPrincipal(aluno) { Title = aluno.Nome});
             }
         }
