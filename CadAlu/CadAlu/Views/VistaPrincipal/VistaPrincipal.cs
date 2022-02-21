@@ -19,11 +19,11 @@ namespace CadAlu.Views.VistaPrincipal
         Escola Escola                       { get; set; }
         internal Agrupamento Agrupamento    { get; private set; }
         Button btnAvaliacoes                = new Button();
-        Button btnSumarios                  = new Button();
+        //Button btnSumarios                  = new Button();
         ListView lstAvaliacoes              = new ListView();
         ListView lstMensagens               = new ListView();
         Button btnCriarNovaMensagem         = new Button();
-        ImageButton btnFoto             = new ImageButton();
+        ImageButton btnFoto             = new ImageButton { Source = "foto.png" };
         Thickness margin                    = new Thickness(10);
 
         public VistaPrincipal(Aluno aluno)
@@ -75,7 +75,7 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private View AdicionarBotaoNovaMensagem()
         {
-            btnCriarNovaMensagem.Text = "+";
+            btnCriarNovaMensagem.ImageSource = "Resources/drawable/comment.png";
             btnCriarNovaMensagem.WidthRequest = 100;
             btnCriarNovaMensagem.HeightRequest = 100;
             btnCriarNovaMensagem.CornerRadius = 50;
@@ -83,7 +83,7 @@ namespace CadAlu.Views.VistaPrincipal
 
             StackLayout novaMensagem = new StackLayout
             {
-                BackgroundColor = Color.Bisque,
+                //BackgroundColor = Color.Bisque,
                 Orientation = StackOrientation.Horizontal,
                 VerticalOptions = LayoutOptions.End,
                 HorizontalOptions = LayoutOptions.End,
@@ -102,14 +102,14 @@ namespace CadAlu.Views.VistaPrincipal
                 Text = "Avaliações",
                 WidthRequest = 150
             };
-            btnSumarios = new Button
-            {
-                Text = "Sumários",
-                WidthRequest = 150
-            };
+            //btnSumarios = new Button
+            //{
+            //    Text = "Sumários",
+            //    WidthRequest = 150
+            //};
            
             btnAvaliacoes.Clicked += BtnAvaliacoes_Clicked;
-            btnSumarios.Clicked += BtnSumarios_Clicked;
+            //btnSumarios.Clicked += BtnSumarios_Clicked;
 
             StackLayout bottom = new StackLayout
             {
@@ -123,7 +123,7 @@ namespace CadAlu.Views.VistaPrincipal
                         Children =
                         {
                             btnAvaliacoes,
-                            btnSumarios,
+                            //btnSumarios,
                         },
                          HorizontalOptions = LayoutOptions.CenterAndExpand
                     }
@@ -170,10 +170,11 @@ namespace CadAlu.Views.VistaPrincipal
 
             ImageButton btnEdita = new ImageButton
             {
-                WidthRequest = 20,
-                HeightRequest = 20,
+                Source = "Resources/drawable/foto.png",
+                WidthRequest = 25,
+                HeightRequest = 25,
                 CornerRadius = 10,
-                BackgroundColor = Color.Black,
+                BackgroundColor = Color.White,
                 HorizontalOptions = LayoutOptions.End,
                 VerticalOptions = LayoutOptions.End
             };
@@ -258,7 +259,7 @@ namespace CadAlu.Views.VistaPrincipal
         {
             await DisplayAlert("Info", Aluno.Nome, "OK");
         }
-        private void BtnSumarios_Clicked(object sender, EventArgs e)
+        /*private void BtnSumarios_Clicked(object sender, EventArgs e)
         {
             //if (lstAvaliacoes.IsVisible == false)
             //{
@@ -272,7 +273,7 @@ namespace CadAlu.Views.VistaPrincipal
             //    lstMensagens.IsVisible = true;
             //    btnAvaliacoes.Text = "Avaliações";
             //}
-        }
+        }*/
         private void BtnAvaliacoes_Clicked(object sender, EventArgs e)
         {
             if (lstAvaliacoes.IsVisible == false)

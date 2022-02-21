@@ -8,6 +8,7 @@
   <ItemGroup>
     <Compile Remove="ViewModels\EducandosViewModel.cs" />
     <Compile Remove="Views\EducandosPage.xaml.cs" />
+    <Compile Remove="Views\VistaMensagens\View1.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,11 +24,11 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Mono.Android">
-      <HintPath>..\..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\ReferenceAssemblies\Microsoft\Framework\MonoAndroid\v10.0\Mono.Android.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+		<Reference Include="Mono.Android">
+			<HintPath>F:\VS2022\Common7\IDE\ReferenceAssemblies\Microsoft\Framework\MonoAndroid\v10.0\Mono.Android.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
   <ItemGroup>
     <Compile Update="Views\OneTimeLogin.xaml.cs">
