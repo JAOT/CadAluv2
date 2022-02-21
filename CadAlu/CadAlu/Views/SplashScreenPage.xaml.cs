@@ -34,10 +34,10 @@ namespace CadAlu.Views
         {
             if (Connectivity.NetworkAccess == NetworkAccess.Internet)
             {
-                bool isLive = await CrossConnectivity.Current.IsRemoteReachable("192.168.1.219");
+                bool isLive = await CrossConnectivity.Current.IsRemoteReachable("10.0.2.2");
                 if (isLive)
                 {
-                    var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+                    var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
                     c1.Open();
                     c1.Close();
                     CheckLogin();

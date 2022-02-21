@@ -112,7 +112,7 @@ namespace CadAlu.Views.VistaMensagens
         {
             List<Destinatario> nomes = new List<Destinatario>();
 
-            var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var connection = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             connection.Open();
 
             var command = connection.CreateCommand();
@@ -193,7 +193,7 @@ namespace CadAlu.Views.VistaMensagens
         {
             if (!string.IsNullOrEmpty(assunto.Text) && !string.IsNullOrEmpty(mensagem.Text))
             {
-                var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+                var connection = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
                 connection.Open();
                 var command = connection.CreateCommand();
                 var cmd = "INSERT INTO MENSAGENS (aluno, tema, texto, professor, lida, pai) VALUES ('" + Aluno.Id + "', '" + assunto.Text + "', '" + mensagem.Text + "', " + ProfessorID + ", 1, 1)";

@@ -23,7 +23,7 @@ namespace CadAlu.Views.VistaPrincipal
         ListView lstAvaliacoes              = new ListView();
         ListView lstMensagens               = new ListView();
         Button btnCriarNovaMensagem         = new Button();
-        ImageButton btnTiraFoto             = new ImageButton();
+        ImageButton btnFoto             = new ImageButton();
         Thickness margin                    = new Thickness(10);
 
         public VistaPrincipal(Aluno aluno)
@@ -66,10 +66,10 @@ namespace CadAlu.Views.VistaPrincipal
                 Image image = new Image
                 {
                     Source = fotoBotao,
-                    HeightRequest = btnTiraFoto.Height,
-                    WidthRequest = btnTiraFoto.Width
+                    HeightRequest = btnFoto.Height,
+                    WidthRequest = btnFoto.Width
                 };
-                btnTiraFoto.Source = fotoBotao;
+                btnFoto.Source = fotoBotao;
 
             }
         }
@@ -160,28 +160,25 @@ namespace CadAlu.Views.VistaPrincipal
 
         private View AdicionarCabecalho()
         {
-            btnTiraFoto = new ImageButton
+            btnFoto = new ImageButton
             {
                 WidthRequest = 80,
                 HeightRequest = 80,
                 CornerRadius = 40
             };
+            btnFoto.Clicked += BtnFoto_Clicked;
 
-            ImageButton btnConsulta = new ImageButton
+            ImageButton btnEdita = new ImageButton
             {
-                WidthRequest = 10,
-                HeightRequest = 10,
-                CornerRadius = 5,
+                WidthRequest = 20,
+                HeightRequest = 20,
+                CornerRadius = 10,
                 BackgroundColor = Color.Black,
                 HorizontalOptions = LayoutOptions.End,
                 VerticalOptions = LayoutOptions.End
             };
 
-            
-
-
-
-            btnTiraFoto.Clicked += BtnTiraFoto_Clicked;
+            btnEdita.Clicked += BtnEdita_Clicked;
             Grid cabecalho = new Grid
             {
                 BackgroundColor = Color.AliceBlue,
@@ -211,8 +208,8 @@ namespace CadAlu.Views.VistaPrincipal
 
 
             cabecalho.Children.Add(infoEscolar, 0, 0);
-            cabecalho.Children.Add(btnConsulta, 1, 0);
-            cabecalho.Children.Add(btnTiraFoto, 1, 0);
+            cabecalho.Children.Add(btnFoto, 1, 0);
+            cabecalho.Children.Add(btnEdita, 1, 0);
 
             TapGestureRecognizer tap = new TapGestureRecognizer();
             tap.Tapped += CabecalhoTapped;
@@ -221,12 +218,17 @@ namespace CadAlu.Views.VistaPrincipal
             return cabecalho;
         }
 
+        private void BtnFoto_Clicked(object sender, EventArgs e)
+        {
+            Application.Current.MainPage = new VistaAluno.VistaAluno(Aluno);
+        }
+
         private void CabecalhoTapped(object sender, EventArgs e)
         {
             Application.Current.MainPage = new VistaEscola.VistaEscola(Escola);
         }
 
-        private async void BtnTiraFoto_Clicked(object sender, EventArgs e)
+        private async void BtnEdita_Clicked(object sender, EventArgs e)
         {
             try
             {
@@ -290,7 +292,7 @@ namespace CadAlu.Views.VistaPrincipal
         {
             Mensagem m = (Mensagem)((ListView)sender).SelectedItem;
             //marcar mensagem como lida
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com1 = c1.CreateCommand();
             com1.CommandText = "UPDATE mensagens  SET Lida = '1' WHERE IDENTIDADE = '" + m.Id + "'";
@@ -302,7 +304,7 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private IEnumerable ObterAvaliacoes()
         {
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com1 = c1.CreateCommand();
             com1.CommandText = "SELECT a.identidade,a.aval, a.tipo, p.disciplina FROM avaliacoes a, professores p WHERE p.identidade = a.avaliador AND a.aluno ='" + Aluno.Id + "'";
@@ -325,7 +327,7 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private IEnumerable ObterMensagens()
         {
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com1 = c1.CreateCommand();
             com1.CommandText = "SELECT * FROM mensagens WHERE aluno = '" + Aluno.Id + "'";
@@ -353,7 +355,7 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private Professor GetProfessor(long id)
         {
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com1 = c1.CreateCommand();
             com1.CommandText = "SELECT * FROM professores WHERE identidade = '" + id + "'";
@@ -369,7 +371,7 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private Pai GetPai(long id)
         {
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com1 = c1.CreateCommand();
             com1.CommandText = "SELECT * FROM pais WHERE identidade = '" + id + "'";
@@ -386,10 +388,10 @@ namespace CadAlu.Views.VistaPrincipal
         }
         void ObterDadosAluno()
         {
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
 
-            //Obter dados do aluno, turma, escola, agrupamento
+            //Obter dados do aluno, turma, escola, agrupamento, pais
 
             var com1 = c1.CreateCommand();
 
@@ -402,13 +404,15 @@ namespace CadAlu.Views.VistaPrincipal
                 Aluno.Id = r1.GetInt32(0);
                 Aluno.Nome = r1.GetString(1);
                 Aluno.Turma = ObterTurma(r1.GetInt32(2));
+                Aluno.Pai1 = GetPai(r1.GetInt32(3));
+                Aluno.Pai2 = GetPai(r1.GetInt32(4));
             }
 
             c1.Close();
         }
         private Turma ObterTurma(int v)
         {
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com1 = c1.CreateCommand();
 
@@ -428,7 +432,7 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private Escola ObterEscola(int v)
         {
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com2 = c1.CreateCommand();
             com2.CommandText = "SELECT * FROM escolas WHERE identidade = '" + v + "'";
@@ -450,7 +454,7 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private Agrupamento ObterAgrupamento(int v)
         {
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com3 = c1.CreateCommand();
 

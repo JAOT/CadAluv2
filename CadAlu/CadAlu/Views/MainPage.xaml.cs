@@ -24,7 +24,7 @@ namespace CadAlu.Views
         }
         private void ProcurarFilhos()
         {
-            var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var connection = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             connection.Open();
 
             var id = Preferences.Get("appId", 0f);

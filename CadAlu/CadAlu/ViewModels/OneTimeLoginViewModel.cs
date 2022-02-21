@@ -18,10 +18,8 @@ namespace CadAlu.ViewModels
         public Command CancelCommand { get; }
         public OneTimeLoginViewModel()
         {
-            //SubmeterCommand = new Command(OnSubmeter, ValidateSubmeter);
             SubmeterCommand = new Command(OnSubmeter); 
             CancelCommand = new Command(OnCancel);
-            //this.PropertyChanged += (_, __) => SubmeterCommand.ChangeCanExecute();
         }
 
         private bool ValidateSubmeter()
@@ -52,7 +50,7 @@ namespace CadAlu.ViewModels
 
         private async void OnSubmeter()
         {
-            var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+            var connection = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             connection.Open();
 
             var command = connection.CreateCommand();

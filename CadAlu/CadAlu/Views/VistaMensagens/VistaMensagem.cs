@@ -205,7 +205,7 @@ namespace CadAlu.Views.VistaMensagens
                 var resposta = await DisplayPromptAsync(rTema, "Mensagem", "Enviar", "Cancelar");
                 if (!string.IsNullOrEmpty(resposta))
                 {
-                    var connection = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
+                    var connection = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
                     connection.Open();
                     var date = DateTime.Now.ToString();
                     var command = connection.CreateCommand();

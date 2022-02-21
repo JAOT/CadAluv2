@@ -11,5 +11,8 @@ namespace CadAlu.Models
         public int IdPai1 { get; set;}
         public int IdPai2 { get; set; }
         public Turma  Turma { get; set; }
+
+        public Pai Pai1 { get; set; }
+        public Pai Pai2 { get; set; }
     }
 }
