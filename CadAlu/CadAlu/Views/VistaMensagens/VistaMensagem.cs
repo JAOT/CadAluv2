@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace CadAlu.Views.VistaMensagens
@@ -35,9 +36,9 @@ namespace CadAlu.Views.VistaMensagens
                     AdicionarAssunto(),
                     AdicionarRemetente(),
                     AdicionarCaixaDeTexto(),
+                    AdicionarDocumento(),
                     AdicionarBotoes()
                 }
-
             };
             this.Content = allPage;      
         }
@@ -94,14 +95,61 @@ namespace CadAlu.Views.VistaMensagens
                                         Margin = LabelDefault
                                     }
                                 }
-
                            }
             };
             return texto;
         }
+        private StackLayout AdicionarDocumento()
+        {
+            Label lblDocumento = new Label
+            {
+                Text = Mensagem.Documento,
+                FontAttributes = FontAttributes.None,
+                FontSize = 12,
+                Margin = LabelDefault
+            };
+            //Adicionar evento de toque para abrir o documento anexado, caso exista
+            if (Mensagem.Documento!="")
+            {
+                TapGestureRecognizer tapLblDoc = new TapGestureRecognizer();
+                tapLblDoc.Tapped += DocumentoTapped;
+                lblDocumento.GestureRecognizers.Add(tapLblDoc);
+            }
+
+            StackLayout documento = new StackLayout
+            {
+                VerticalOptions = LayoutOptions.End,
+                Orientation = StackOrientation.Vertical,
+                BackgroundColor = Color.Bisque,
+                Margin = margin,
+                Children = {
+                                lblDocumento
+                           }
+            };
+            return documento;
+        }
+
+        private async void DocumentoTapped(object sender, EventArgs e)
+        {
+            try
+            {
+                await Browser.OpenAsync(Mensagem.Documento, BrowserLaunchMode.SystemPreferred);
+            }
+            catch (Exception ex)
+            {
+                // An unexpected error occured. No browser may be installed on the device.
+            }
+        }
 
         private StackLayout AdicionarRemetente()
         {
+            string textoInicial = "Enviada ";
+            //caso tenha sido enviada por um professor, escrever o nome
+            if (Mensagem.Pai.Id==0)
+            {
+                textoInicial = "Enviado por " + Mensagem.Professor.Nome;
+            }
+
             StackLayout remetente = new StackLayout
             {
                 VerticalOptions = LayoutOptions.Start,
@@ -110,7 +158,7 @@ namespace CadAlu.Views.VistaMensagens
                 Children = {
                                 new Label
                                 {
-                                    Text = "Enviado por " + Mensagem.Professor.Nome + " em " + Mensagem.DataHora.ToShortDateString() + " - " + Mensagem.DataHora.ToShortTimeString(),
+                                    Text = textoInicial + " em " + Mensagem.DataHora.ToShortDateString() + " - " + Mensagem.DataHora.ToShortTimeString(),
                                     FontAttributes = FontAttributes.None,
                                     FontSize = 14,
                                     Margin = LabelDefault,

@@ -16,6 +16,7 @@ namespace CadAlu.Models
         public long Aluno { get; internal set; }
         public long Lida { get; internal set; }
         public string NomeProfessor { get; private set; }
+        public string Documento { get; set; }
 
         public Mensagem()
         {

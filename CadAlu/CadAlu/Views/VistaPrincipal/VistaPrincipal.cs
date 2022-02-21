@@ -134,13 +134,6 @@ namespace CadAlu.Views.VistaPrincipal
         private View AdicionarListas()
         {
 
-            Picker picker = new Picker
-            {
-                Title = "Disciplina",
-                ItemDisplayBinding = new Binding("Nome"),
-                ItemsSource = ObterDisciplinas()
-            };
-
             lstMensagens.ItemTemplate = new SelectorTemplateMensagens();
             lstMensagens.ItemsSource = ObterMensagens();
             lstMensagens.ItemTapped += lstMensagens_ItemTappedAsync;
@@ -159,7 +152,7 @@ namespace CadAlu.Views.VistaPrincipal
                 Margin = margin,
                 Children =
                 {
-                    picker, lstMensagens, lstAvaliacoes
+                    lstMensagens, lstAvaliacoes
                 }
             };
             return listas;
@@ -173,6 +166,21 @@ namespace CadAlu.Views.VistaPrincipal
                 HeightRequest = 80,
                 CornerRadius = 40
             };
+
+            ImageButton btnConsulta = new ImageButton
+            {
+                WidthRequest = 10,
+                HeightRequest = 10,
+                CornerRadius = 5,
+                BackgroundColor = Color.Black,
+                HorizontalOptions = LayoutOptions.End,
+                VerticalOptions = LayoutOptions.End
+            };
+
+            
+
+
+
             btnTiraFoto.Clicked += BtnTiraFoto_Clicked;
             Grid cabecalho = new Grid
             {
@@ -203,6 +211,7 @@ namespace CadAlu.Views.VistaPrincipal
 
 
             cabecalho.Children.Add(infoEscolar, 0, 0);
+            cabecalho.Children.Add(btnConsulta, 1, 0);
             cabecalho.Children.Add(btnTiraFoto, 1, 0);
 
             TapGestureRecognizer tap = new TapGestureRecognizer();
@@ -334,6 +343,8 @@ namespace CadAlu.Views.VistaPrincipal
                 msg.DataHora = r1.GetDateTime(5);
                 msg.Lida = r1.GetInt64(6);
                 msg.Pai = r1.IsDBNull(7) ? null : GetPai(r1.GetInt64(7));
+                msg.Documento = r1.GetString(8);
+
                 mensagens.Add(msg);
             }
             c1.Close();
@@ -458,28 +469,6 @@ namespace CadAlu.Views.VistaPrincipal
             c1.Close();
 
             return Agrupamento;
-        }
-        private List<Disciplina> ObterDisciplinas()
-        {
-            List<Disciplina> disciplinas = new List<Disciplina>();
-            var c1 = new MySqlConnection("Server=192.168.1.219;Database=cadalu;Uid=android;");
-            c1.Open();
-            var com3 = c1.CreateCommand();
-
-            com3.CommandText = "SELECT * FROM disciplinas WHERE turma = '" + Aluno.Turma.Id + "'";
-            var r3 = com3.ExecuteReader();
-            while (r3.Read())
-            {
-                disciplinas.Add (new Disciplina
-                {
-                    Id = r3.GetInt32(0),
-                    Turma = ObterTurma(r3.GetInt32(1)),
-                    Professor = GetProfessor(r3.GetInt32(2)),
-                    Nome = r3.GetString(3)
-                });
-            }
-            c1.Close();
-            return disciplinas;
         }
     }
 }

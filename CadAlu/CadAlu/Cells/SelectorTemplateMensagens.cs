@@ -28,8 +28,8 @@ namespace CadAlu.Cells
             {
                 var lida = ((Mensagem)item).Lida;
                 var pai = ((Mensagem)item).Pai;
-                Console.WriteLine(m.Id);
-                Console.WriteLine(pai.Id);
+                //Console.WriteLine(m.Id);
+                //Console.WriteLine(pai.Id);
                 //tem prof associado  (alinhamento direito)
                 //não tem prof associado  (alinhamento esquerdo)
                 //foi lida (negrito)

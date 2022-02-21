@@ -1,4 +1,5 @@
 ﻿using CadAlu.Models;
+using Plugin.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -82,6 +83,17 @@ namespace CadAlu.Views.VistaEscola
 
         private View AdicionarDetalhesEscola()
         {
+            Label lblAgrupamentoTelefone = new Label { Text = Escola.Agrupamento.Telefone.ToString(), HorizontalTextAlignment = TextAlignment.Center };
+            TapGestureRecognizer tapAgrupamentoTelefone = new TapGestureRecognizer();
+            tapAgrupamentoTelefone.Tapped += AgrupamentoTapped;
+            lblAgrupamentoTelefone.GestureRecognizers.Add(tapAgrupamentoTelefone);
+
+            Label lblEscolaTelefone = new Label { Text = Escola.Telefone.ToString(), HorizontalTextAlignment = TextAlignment.Center };
+            TapGestureRecognizer tapEscolaTelefone = new TapGestureRecognizer();
+            tapEscolaTelefone.Tapped += EscolaTapped;
+            lblEscolaTelefone.GestureRecognizers.Add(tapEscolaTelefone);
+
+
             Grid infoEscola = new Grid
             {
                 RowDefinitions = new RowDefinitionCollection
@@ -93,12 +105,30 @@ namespace CadAlu.Views.VistaEscola
             };
             infoEscola.Children.Add(new Label { Text = Escola.Agrupamento.Nome , HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold}, 0, 1);
             infoEscola.Children.Add(new Label { Text = Escola.Agrupamento.Morada, HorizontalTextAlignment = TextAlignment.Center }, 0, 2);
-            infoEscola.Children.Add(new Label { Text = Escola.Agrupamento.Telefone.ToString(), HorizontalTextAlignment = TextAlignment.Center}, 0, 3);
+            infoEscola.Children.Add(lblAgrupamentoTelefone, 0, 3);
             infoEscola.Children.Add(new Label { Text = Escola.Nome, HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold }, 0, 4);
             infoEscola.Children.Add(new Label { Text = Escola.Morada, HorizontalTextAlignment = TextAlignment.Center }, 0, 5);
-            infoEscola.Children.Add(new Label { Text = Escola.Telefone.ToString(), HorizontalTextAlignment = TextAlignment.Center }, 0, 6);
+            infoEscola.Children.Add(lblEscolaTelefone, 0, 6);
 
             return infoEscola;
+        }
+
+        private void AgrupamentoTapped(object sender, EventArgs e)
+        {
+            var chamada = CrossMessaging.Current.PhoneDialer;
+            if (chamada.CanMakePhoneCall)
+            {
+                chamada.MakePhoneCall(Escola.Agrupamento.Telefone.ToString());
+            }
+        }
+
+        private void EscolaTapped(object sender, EventArgs e)
+        {
+            var chamada = CrossMessaging.Current.PhoneDialer;
+            if (chamada.CanMakePhoneCall)
+            {
+                chamada.MakePhoneCall(Escola.Telefone.ToString());
+            }
         }
     }
 }
