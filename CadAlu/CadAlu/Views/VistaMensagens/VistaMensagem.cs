@@ -22,6 +22,8 @@ namespace CadAlu.Views.VistaMensagens
 
         public VistaMensagem(Mensagem m, int idAluno)
         {
+            BackgroundColor = Color.LightGray;
+
             Mensagem = m;
             IdAluno = idAluno;
 
@@ -34,7 +36,7 @@ namespace CadAlu.Views.VistaMensagens
                 Children =
                 {
                     AdicionarAssunto(),
-                    AdicionarRemetente(),
+                    //AdicionarRemetente(),
                     AdicionarCaixaDeTexto(),
                     AdicionarDocumento(),
                     AdicionarBotoes()
@@ -81,18 +83,25 @@ namespace CadAlu.Views.VistaMensagens
             StackLayout texto = new StackLayout
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
-                BackgroundColor = Color.Bisque,
+                BackgroundColor = Color.White,
                 Margin = margin,
                 Children = {
+                                new Label
+                                {
+                                    Text = "Mensagem",
+                                    FontAttributes = FontAttributes.Bold,
+                                    FontSize = 24,
+                                    BackgroundColor = Color.LightGray,
+                                },
                                 new ScrollView
                                 {
+                                    BackgroundColor = Color.White,
                                     Orientation = ScrollOrientation.Vertical,
                                     Content = new Label
                                     {
                                         Text = Mensagem.Texto,
                                         FontAttributes = FontAttributes.None,
                                         FontSize = 16,
-                                        Margin = LabelDefault
                                     }
                                 }
                            }
@@ -106,7 +115,7 @@ namespace CadAlu.Views.VistaMensagens
                 Text = Mensagem.Documento,
                 FontAttributes = FontAttributes.None,
                 FontSize = 12,
-                Margin = LabelDefault
+                BackgroundColor = Color.White
             };
             //Adicionar evento de toque para abrir o documento anexado, caso exista
             if (Mensagem.Documento!="")
@@ -120,9 +129,13 @@ namespace CadAlu.Views.VistaMensagens
             {
                 VerticalOptions = LayoutOptions.End,
                 Orientation = StackOrientation.Vertical,
-                BackgroundColor = Color.Bisque,
+                BackgroundColor = Color.LightGray,
                 Margin = margin,
                 Children = {
+                                new Label
+                                {
+                                    Text = "Documento anexo"
+                                },
                                 lblDocumento
                            }
             };
@@ -143,28 +156,14 @@ namespace CadAlu.Views.VistaMensagens
 
         private StackLayout AdicionarRemetente()
         {
-            string textoInicial = "Enviada ";
-            //caso tenha sido enviada por um professor, escrever o nome
-            if (Mensagem.Pai.Id==0)
-            {
-                textoInicial = "Enviado por " + Mensagem.Professor.Nome;
-            }
+
 
             StackLayout remetente = new StackLayout
             {
                 VerticalOptions = LayoutOptions.Start,
                 Orientation = StackOrientation.Vertical,
-                Margin = LabelDefault,
                 Children = {
-                                new Label
-                                {
-                                    Text = textoInicial + " em " + Mensagem.DataHora.ToShortDateString() + " - " + Mensagem.DataHora.ToShortTimeString(),
-                                    FontAttributes = FontAttributes.None,
-                                    FontSize = 14,
-                                    Margin = LabelDefault,
-                                    HorizontalTextAlignment = TextAlignment.End,
-                                    VerticalTextAlignment = TextAlignment.End
-                                }
+
                            }
             };
             return remetente;
@@ -172,25 +171,39 @@ namespace CadAlu.Views.VistaMensagens
 
         private StackLayout AdicionarAssunto()
         {
+            string textoInicial = "Enviada ";
+            //caso tenha sido enviada por um professor, escrever o nome
+            if (Mensagem.Pai.Id == 0)
+            {
+                textoInicial = "Enviado por " + Mensagem.Professor.Nome;
+            }
+
             StackLayout assunto = new StackLayout
             {
+                Margin = margin,
                 VerticalOptions = LayoutOptions.Start,
                 Orientation = StackOrientation.Vertical,
-                Margin = LabelDefault,
+                BackgroundColor = Color.LightGray,
                 Children = {
                                 new Label
                                 {
                                     Text = "Assunto: ",
                                     FontAttributes = FontAttributes.Bold,
                                     FontSize = 24,
-                                    Margin = LabelDefault
                                 },
                                 new Label
                                 {
                                     Text = Mensagem.Tema,
                                     FontAttributes = FontAttributes.Bold,
                                     FontSize = 18,
-                                    Margin = LabelDefault
+                                },
+                                new Label
+                                {
+                                    Text = textoInicial + " em " + Mensagem.DataHora.ToShortDateString() + " - " + Mensagem.DataHora.ToShortTimeString(),
+                                    FontAttributes = FontAttributes.None,
+                                    FontSize = 12,
+                                    HorizontalTextAlignment = TextAlignment.End,
+                                    VerticalTextAlignment = TextAlignment.End
                                 }
                            }
             };
@@ -209,7 +222,7 @@ namespace CadAlu.Views.VistaMensagens
                     connection.Open();
                     var date = DateTime.Now.ToString();
                     var command = connection.CreateCommand();
-                    command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor) VALUES ('" + IdAluno + "', '" + rTema + "', '" + resposta + "', '1')";
+                    command.CommandText = "INSERT INTO MENSAGENS (aluno, tema, texto, professor, documento, pai, lida) VALUES ('" + IdAluno + "', '" + rTema + "', '" + resposta + "', '1', '', '1', '1')";
                     try
                     {
                         var reader = command.ExecuteNonQuery();

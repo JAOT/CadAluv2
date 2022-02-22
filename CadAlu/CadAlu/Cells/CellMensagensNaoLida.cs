@@ -26,7 +26,7 @@ namespace CadAlu.Cells
 
             lblAssunto.SetBinding(Label.TextProperty, "Tema");
             lblremetente.SetBinding(Label.TextProperty, "Professor.Nome");
-            lblDataHora.SetBinding(Label.TextProperty, "DataHora.Date");
+            lblDataHora.SetBinding(Label.TextProperty, "DataHora");
 
             //remetente e datahora, orientados verticalmente
             Grid detalhes = new Grid();

@@ -21,7 +21,8 @@ namespace CadAlu.Views.VistaMensagens
         public VistaNovaMensagem(Aluno aluno)
         {
             Aluno = aluno;
-            
+            BackgroundColor = Color.LightGray;
+
             StackLayout allPage = new StackLayout
             {
                 Margin = margin,
@@ -43,12 +44,11 @@ namespace CadAlu.Views.VistaMensagens
         {
             assunto.Placeholder = "Assunto";
             assunto.PlaceholderColor = Color.LightGray;
-
+            assunto.BackgroundColor = Color.White;
             StackLayout stkAssunto = new StackLayout
             {
                 VerticalOptions = LayoutOptions.Start,
                 Orientation = StackOrientation.Vertical,
-                BackgroundColor= Color.AliceBlue,
                 Margin = margin,
                 Children = {
                                 new Label
@@ -93,7 +93,6 @@ namespace CadAlu.Views.VistaMensagens
 
             StackLayout dest = new StackLayout
             {
-                BackgroundColor = Color.Bisque,
                 Margin = margin,
                 Children =
                 {
@@ -137,10 +136,9 @@ namespace CadAlu.Views.VistaMensagens
             mensagem.Placeholder = "Nova mensagem";
             mensagem.PlaceholderColor = Color.LightGray;
             mensagem.VerticalOptions = LayoutOptions.FillAndExpand;
-
+            mensagem.BackgroundColor = Color.White;
             StackLayout middle = new StackLayout
             {
-                BackgroundColor = Color.Bisque,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 Margin = margin,
                 Children =
@@ -196,7 +194,7 @@ namespace CadAlu.Views.VistaMensagens
                 var connection = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
                 connection.Open();
                 var command = connection.CreateCommand();
-                var cmd = "INSERT INTO MENSAGENS (aluno, tema, texto, professor, lida, pai) VALUES ('" + Aluno.Id + "', '" + assunto.Text + "', '" + mensagem.Text + "', " + ProfessorID + ", 1, 1)";
+                var cmd = "INSERT INTO MENSAGENS (aluno, tema, texto, professor, lida, pai, documento) VALUES ('" + Aluno.Id + "', '" + assunto.Text + "', '" + mensagem.Text + "', " + ProfessorID + ", 1, 1, '')";
                 command.CommandText = cmd;
                 try
                 {

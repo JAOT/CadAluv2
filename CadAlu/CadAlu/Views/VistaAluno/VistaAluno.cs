@@ -49,10 +49,10 @@ namespace CadAlu.Views.VistaAluno
 
         private View AdicionarDados()
         {
-            Label lblNome = new Label { Text = Aluno.Nome, HorizontalTextAlignment = TextAlignment.Center };
-            Label lblEscola = new Label { Text = Aluno.Turma.Escola.Nome, HorizontalTextAlignment = TextAlignment.Center };
-            Label lblPai = new Label { Text = Aluno.Pai1.Nome, HorizontalTextAlignment = TextAlignment.Center };
-            Label lblTelefonePai = new Label { Text = Aluno.Pai1.Telefone, HorizontalTextAlignment = TextAlignment.Center };
+            Label lblNome = new Label { Text = "Nome: " + Aluno.Nome, HorizontalTextAlignment = TextAlignment.Start };
+            Label lblEscola = new Label { Text = "Escola: " + Aluno.Turma.Escola.Nome, HorizontalTextAlignment = TextAlignment.Start };
+            Label lblPai = new Label { Text = "Encarregado de educação: "+Aluno.Pai1.Nome, HorizontalTextAlignment = TextAlignment.Start };
+            Label lblTelefonePai = new Label { Text = "Contacto: "+Aluno.Pai1.Telefone, HorizontalTextAlignment = TextAlignment.Start };
 
             Grid infoAluno = new Grid
             {
@@ -60,22 +60,32 @@ namespace CadAlu.Views.VistaAluno
                 {
                     new RowDefinition{},
                     new RowDefinition{},
+                    new RowDefinition{},
                     new RowDefinition{}
                 }
             };
+
             infoAluno.Children.Add(lblNome, 0, 1);
             infoAluno.Children.Add(lblEscola, 0, 2);
             infoAluno.Children.Add(lblPai, 0, 3);
             infoAluno.Children.Add(lblTelefonePai, 0, 4);
 
-            return infoAluno;
+            StackLayout meio = new StackLayout
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalOptions = LayoutOptions.FillAndExpand
+
+            };
+            meio.Children.Add(infoAluno);
+
+            return meio;
         }
 
         private View AdicionarBotoes()
         {
             Button btnVoltar = new Button
             {
-                Text = "Avaliações",
+                Text = "Voltar",
                 WidthRequest = 150
             };
 
@@ -100,7 +110,6 @@ namespace CadAlu.Views.VistaAluno
             };
             return bottom;
         }
-
         private void BtnVoltar_Clicked(object sender, EventArgs e)
         {
             Application.Current.MainPage = new MainPage();

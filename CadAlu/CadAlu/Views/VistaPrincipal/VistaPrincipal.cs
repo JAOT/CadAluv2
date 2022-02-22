@@ -19,7 +19,6 @@ namespace CadAlu.Views.VistaPrincipal
         Escola Escola                       { get; set; }
         internal Agrupamento Agrupamento    { get; private set; }
         Button btnAvaliacoes                = new Button();
-        //Button btnSumarios                  = new Button();
         ListView lstAvaliacoes              = new ListView();
         ListView lstMensagens               = new ListView();
         Button btnCriarNovaMensagem         = new Button();
@@ -28,6 +27,7 @@ namespace CadAlu.Views.VistaPrincipal
 
         public VistaPrincipal(Aluno aluno)
         {
+            BackgroundColor = Color.LightGray;
             this.Aluno = aluno;
             ObterDadosAluno();
 
@@ -133,7 +133,6 @@ namespace CadAlu.Views.VistaPrincipal
         }
         private View AdicionarListas()
         {
-
             lstMensagens.ItemTemplate = new SelectorTemplateMensagens();
             lstMensagens.ItemsSource = ObterMensagens();
             lstMensagens.ItemTapped += lstMensagens_ItemTappedAsync;
@@ -160,6 +159,12 @@ namespace CadAlu.Views.VistaPrincipal
 
         private View AdicionarCabecalho()
         {
+            StackLayout stkCabecalho = new StackLayout
+            {
+                Margin = margin,
+            };
+
+
             btnFoto = new ImageButton
             {
                 WidthRequest = 80,
@@ -182,7 +187,7 @@ namespace CadAlu.Views.VistaPrincipal
             btnEdita.Clicked += BtnEdita_Clicked;
             Grid cabecalho = new Grid
             {
-                BackgroundColor = Color.AliceBlue,
+                BackgroundColor = Color.LightGray,
                 RowDefinitions = new RowDefinitionCollection
                 {
                     new RowDefinition { Height = 80 },
@@ -216,7 +221,9 @@ namespace CadAlu.Views.VistaPrincipal
             tap.Tapped += CabecalhoTapped;
             cabecalho.GestureRecognizers.Add(tap);
 
-            return cabecalho;
+            stkCabecalho.Children.Add(cabecalho);
+
+            return stkCabecalho;
         }
 
         private void BtnFoto_Clicked(object sender, EventArgs e)
@@ -257,23 +264,11 @@ namespace CadAlu.Views.VistaPrincipal
         }
         async void lstAvaliacoes_ItemTappedAsync(object sender, ItemTappedEventArgs e)
         {
-            await DisplayAlert("Info", Aluno.Nome, "OK");
+            Avaliacao a = (Avaliacao)((ListView)sender).SelectedItem;
+
+            await DisplayAlert(a.Disciplina.Nome, a.Tipo + "\n" + a.Aval + "\n" + a.Avaliador.Nome, "OK");
         }
-        /*private void BtnSumarios_Clicked(object sender, EventArgs e)
-        {
-            //if (lstAvaliacoes.IsVisible == false)
-            //{
-            //    lstAvaliacoes.IsVisible = true;
-            //    lstMensagens.IsVisible = false;
-            //    btnAvaliacoes.Text = "Mensagens";
-            //}
-            //else
-            //{
-            //    lstAvaliacoes.IsVisible = false;
-            //    lstMensagens.IsVisible = true;
-            //    btnAvaliacoes.Text = "Avaliações";
-            //}
-        }*/
+
         private void BtnAvaliacoes_Clicked(object sender, EventArgs e)
         {
             if (lstAvaliacoes.IsVisible == false)
@@ -308,7 +303,7 @@ namespace CadAlu.Views.VistaPrincipal
             var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
             var com1 = c1.CreateCommand();
-            com1.CommandText = "SELECT a.identidade,a.aval, a.tipo, p.disciplina FROM avaliacoes a, professores p WHERE p.identidade = a.avaliador AND a.aluno ='" + Aluno.Id + "'";
+            com1.CommandText = "SELECT * FROM avaliacoes WHERE aluno ='" + Aluno.Id + "'";
             var r1 = com1.ExecuteReader();
 
             List<Avaliacao> avaliacoes = new List<Avaliacao>();
@@ -319,13 +314,32 @@ namespace CadAlu.Views.VistaPrincipal
                 ava.Id = r1.GetInt64(0);
                 ava.Aval = r1.GetString(1);
                 ava.Tipo = r1.GetString(2);
-                ava.Disciplina = r1.GetString(3);
+                ava.Avaliador = ObterProfessor(r1.GetInt64(4));
+                ava.Disciplina = ObterDisciplina(r1.GetInt32(5));
                 avaliacoes.Add(ava);
             }
             c1.Close();
 
             return avaliacoes;
         }
+
+        private Disciplina ObterDisciplina(int id)
+        {
+            var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
+            c1.Open();
+            var com1 = c1.CreateCommand();
+            com1.CommandText = "SELECT * FROM disciplinas WHERE id = '" + id + "'";
+            var r1 = com1.ExecuteReader();
+            Disciplina disciplina = new Disciplina();
+            while (r1.Read())
+            {
+                disciplina.Id = r1.GetInt32(0);
+                disciplina.Nome = r1.GetString(3);
+            }
+            c1.Close();
+            return disciplina;
+        }
+
         private IEnumerable ObterMensagens()
         {
             var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
@@ -342,10 +356,10 @@ namespace CadAlu.Views.VistaPrincipal
                 msg.Id = r1.GetInt64(0);
                 msg.Tema = r1.GetString(2);
                 msg.Texto = r1.GetString(3);
-                msg.Professor = r1.IsDBNull(4) ? null : GetProfessor(r1.GetInt64(4));
+                msg.Professor = r1.IsDBNull(4) ? null : ObterProfessor(r1.GetInt64(4));
                 msg.DataHora = r1.GetDateTime(5);
                 msg.Lida = r1.GetInt64(6);
-                msg.Pai = r1.IsDBNull(7) ? null : GetPai(r1.GetInt64(7));
+                msg.Pai = r1.IsDBNull(7) ? null : ObterPai(r1.GetInt64(7));
                 msg.Documento = r1.GetString(8);
 
                 mensagens.Add(msg);
@@ -354,7 +368,7 @@ namespace CadAlu.Views.VistaPrincipal
             mensagens.Sort((m, mm) => mm.DataHora.CompareTo(m.DataHora));
             return mensagens;
         }
-        private Professor GetProfessor(long id)
+        private Professor ObterProfessor(long id)
         {
             var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
@@ -370,7 +384,7 @@ namespace CadAlu.Views.VistaPrincipal
             c1.Close();
             return professor;
         }
-        private Pai GetPai(long id)
+        private Pai ObterPai(long id)
         {
             var c1 = new MySqlConnection("Server=10.0.2.2;Database=cadalu;Uid=android;");
             c1.Open();
@@ -382,7 +396,9 @@ namespace CadAlu.Views.VistaPrincipal
             {
                 pai.Id = r1.GetInt16(0);
                 pai.Nome = r1.GetString(1);
-                
+                pai.Email = r1.GetString(2);
+                pai.Telefone = r1.GetInt32(3).ToString();
+
             }
             c1.Close();
             return pai;
@@ -405,8 +421,8 @@ namespace CadAlu.Views.VistaPrincipal
                 Aluno.Id = r1.GetInt32(0);
                 Aluno.Nome = r1.GetString(1);
                 Aluno.Turma = ObterTurma(r1.GetInt32(2));
-                Aluno.Pai1 = GetPai(r1.GetInt32(3));
-                Aluno.Pai2 = GetPai(r1.GetInt32(4));
+                Aluno.Pai1 = ObterPai(r1.GetInt32(3));
+                Aluno.Pai2 = ObterPai(r1.GetInt32(4));
             }
 
             c1.Close();

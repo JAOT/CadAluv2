@@ -16,10 +16,13 @@ namespace CadAlu.Views.VistaEscola
 
         public VistaEscola(Escola escola)
         {
+            BackgroundColor = Color.LightGray;
+
             this.Escola = escola;
             StackLayout pagina = new StackLayout
             {
                 Margin = margin,
+                BackgroundColor = Color.LightGray,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 Children =
@@ -44,6 +47,7 @@ namespace CadAlu.Views.VistaEscola
 
             StackLayout bottom = new StackLayout
             {
+                BackgroundColor = Color.LightGray,
                 Orientation = StackOrientation.Vertical,
                 VerticalOptions = LayoutOptions.End,
                 Children =
@@ -71,6 +75,8 @@ namespace CadAlu.Views.VistaEscola
         {
             Grid mapa = new Grid
             {
+                Margin = margin,
+                BackgroundColor = Color.LightGray,
                 RowDefinitions = new RowDefinitionCollection
                 {
                     new RowDefinition { }
@@ -83,12 +89,12 @@ namespace CadAlu.Views.VistaEscola
 
         private View AdicionarDetalhesEscola()
         {
-            Label lblAgrupamentoTelefone = new Label { Text = Escola.Agrupamento.Telefone.ToString(), HorizontalTextAlignment = TextAlignment.Center };
+            Label lblAgrupamentoTelefone = new Label { Text = Escola.Agrupamento.Telefone.ToString(), HorizontalTextAlignment = TextAlignment.Start };
             TapGestureRecognizer tapAgrupamentoTelefone = new TapGestureRecognizer();
             tapAgrupamentoTelefone.Tapped += AgrupamentoTapped;
             lblAgrupamentoTelefone.GestureRecognizers.Add(tapAgrupamentoTelefone);
 
-            Label lblEscolaTelefone = new Label { Text = Escola.Telefone.ToString(), HorizontalTextAlignment = TextAlignment.Center };
+            Label lblEscolaTelefone = new Label { Text = Escola.Telefone.ToString(), HorizontalTextAlignment = TextAlignment.End };
             TapGestureRecognizer tapEscolaTelefone = new TapGestureRecognizer();
             tapEscolaTelefone.Tapped += EscolaTapped;
             lblEscolaTelefone.GestureRecognizers.Add(tapEscolaTelefone);
@@ -96,18 +102,24 @@ namespace CadAlu.Views.VistaEscola
 
             Grid infoEscola = new Grid
             {
+                BackgroundColor = Color.LightGray,
+                Margin = margin,
                 RowDefinitions = new RowDefinitionCollection
                 {
+                    new RowDefinition{},
+                    new RowDefinition{},
+                    new RowDefinition{},
+                    new RowDefinition{},
                     new RowDefinition{},
                     new RowDefinition{},
                     new RowDefinition{}
                 }
             };
-            infoEscola.Children.Add(new Label { Text = Escola.Agrupamento.Nome , HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold}, 0, 1);
-            infoEscola.Children.Add(new Label { Text = Escola.Agrupamento.Morada, HorizontalTextAlignment = TextAlignment.Center }, 0, 2);
+            infoEscola.Children.Add(new Label { Text = Escola.Agrupamento.Nome , HorizontalTextAlignment = TextAlignment.Start, FontAttributes = FontAttributes.Bold}, 0, 1);
+            infoEscola.Children.Add(new Label { Text = Escola.Agrupamento.Morada, HorizontalTextAlignment = TextAlignment.Start }, 0, 2);
             infoEscola.Children.Add(lblAgrupamentoTelefone, 0, 3);
-            infoEscola.Children.Add(new Label { Text = Escola.Nome, HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold }, 0, 4);
-            infoEscola.Children.Add(new Label { Text = Escola.Morada, HorizontalTextAlignment = TextAlignment.Center }, 0, 5);
+            infoEscola.Children.Add(new Label { Text = Escola.Nome, HorizontalTextAlignment = TextAlignment.End, FontAttributes = FontAttributes.Bold }, 0, 4);
+            infoEscola.Children.Add(new Label { Text = Escola.Morada, HorizontalTextAlignment = TextAlignment.End }, 0, 5);
             infoEscola.Children.Add(lblEscolaTelefone, 0, 6);
 
             return infoEscola;

@@ -9,6 +9,7 @@ namespace CadAlu.Models
         public long Id { get; internal set; }
         public string Aval { get; internal set; }
         public string Tipo { get; internal set; }
-        public string Disciplina { get; internal set; }
+        public Professor Avaliador { get; internal set; }
+        public Disciplina Disciplina { get; internal set; }
     }
 }

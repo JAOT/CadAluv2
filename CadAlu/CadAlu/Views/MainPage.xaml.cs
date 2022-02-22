@@ -18,6 +18,8 @@ namespace CadAlu.Views
 
         public MainPage()
         {
+            BackgroundColor = Color.LightGray;
+
             InitializeComponent();
             //obter os filhos
             ProcurarFilhos();
