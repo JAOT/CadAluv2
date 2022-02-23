@@ -22,8 +22,8 @@ namespace CadAlu.Views.VistaPrincipal
         ListView lstAvaliacoes              = new ListView();
         ListView lstMensagens               = new ListView();
         Button btnCriarNovaMensagem         = new Button();
-        ImageButton btnFoto             = new ImageButton { Source = "foto.png" };
-        Thickness margin                    = new Thickness(10);
+        ImageButton btnFoto                 = new ImageButton { Source = "foto.png" };
+        Thickness margens                    = new Thickness(10);
 
         public VistaPrincipal(Aluno aluno)
         {
@@ -42,7 +42,7 @@ namespace CadAlu.Views.VistaPrincipal
 
             StackLayout allPage = new StackLayout
             {
-                Margin = margin,
+                Margin = margens,
                 BackgroundColor = Color.LightGray,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -87,7 +87,7 @@ namespace CadAlu.Views.VistaPrincipal
                 Orientation = StackOrientation.Horizontal,
                 VerticalOptions = LayoutOptions.End,
                 HorizontalOptions = LayoutOptions.End,
-                Margin = margin,
+                Margin = margens,
                 Children =
                         {
                             btnCriarNovaMensagem
@@ -148,7 +148,7 @@ namespace CadAlu.Views.VistaPrincipal
             {
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Margin = margin,
+                Margin = margens,
                 Children =
                 {
                     lstMensagens, lstAvaliacoes
@@ -161,7 +161,7 @@ namespace CadAlu.Views.VistaPrincipal
         {
             StackLayout stkCabecalho = new StackLayout
             {
-                Margin = margin,
+                Margin = margens,
             };
 
 
@@ -310,13 +310,13 @@ namespace CadAlu.Views.VistaPrincipal
 
             while (r1.Read())
             {
-                Avaliacao ava = new Avaliacao();
-                ava.Id = r1.GetInt64(0);
-                ava.Aval = r1.GetString(1);
-                ava.Tipo = r1.GetString(2);
-                ava.Avaliador = ObterProfessor(r1.GetInt64(4));
-                ava.Disciplina = ObterDisciplina(r1.GetInt32(5));
-                avaliacoes.Add(ava);
+                Avaliacao avaliacao = new Avaliacao();
+                avaliacao.Id = r1.GetInt64(0);
+                avaliacao.Aval = r1.GetString(1);
+                avaliacao.Tipo = r1.GetString(2);
+                avaliacao.Avaliador = ObterProfessor(r1.GetInt64(4));
+                avaliacao.Disciplina = ObterDisciplina(r1.GetInt32(5));
+                avaliacoes.Add(avaliacao);
             }
             c1.Close();
 
